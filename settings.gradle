@@ -1,0 +1,3 @@
+rootProject.name='LibyuvWrapper'
+include ':app'
+include ':libyuv'
