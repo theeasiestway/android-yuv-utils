@@ -25,11 +25,6 @@
             android:id="@+id/vImageView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:layout_width="100px"
-            android:layout_height="100px"
-            android:src="@mipmap/ic_launcher"/>
     </LinearLayout>
 
     <Button

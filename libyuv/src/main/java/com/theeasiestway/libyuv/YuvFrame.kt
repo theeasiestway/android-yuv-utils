@@ -1,7 +1,7 @@
 package com.theeasiestway.libyuv
 
 import android.media.Image
-import android.util.Log
+import java.nio.ByteBuffer
 
 //
 // Created by Loboda Alexey on 22.06.2020.
@@ -9,9 +9,9 @@ import android.util.Log
 
 class YuvFrame {
 
-    lateinit var y: ByteArray; private set
-    lateinit var u: ByteArray; private set
-    lateinit var v: ByteArray; private set
+    lateinit var y: ByteBuffer; private set
+    lateinit var u: ByteBuffer; private set
+    lateinit var v: ByteBuffer; private set
 
     var yStride: Int = 0; private set
     var uStride: Int = 0; private set
@@ -24,19 +24,17 @@ class YuvFrame {
 
         for (i in 0 until 3) {
             val plane = image.planes[i]
-            val bytes = ByteArray(plane.buffer.remaining())
-            plane.buffer.get(bytes)
             when(i) {
                 0 -> {
-                    y = bytes
+                    y = plane.buffer
                     yStride = plane.rowStride
                 }
                 1 -> {
-                    u = bytes
+                    u = plane.buffer
                     uStride = plane.rowStride
                 }
                 2 -> {
-                    v = bytes
+                    v = plane.buffer
                     vStride = plane.rowStride
                 }
             }
@@ -45,16 +43,13 @@ class YuvFrame {
         width = image.width
         height = image.height
 
-        Log.d("weewfwef", "width: $width; height: $height; y: ${y.size}; u: ${u.size}; v: ${v.size}")
-        Log.d("weewfwef", "yStride: ${yStride}; uStride: ${uStride}; vStride: ${vStride}")
-
         image.close()
     }
 
     fun free() {
-        y = ByteArray(1)
-        u = ByteArray(1)
-        v = ByteArray(1)
+        y = ByteBuffer.allocate(1)
+        u = ByteBuffer.allocate(1)
+        v = ByteBuffer.allocate(1)
 
         yStride = 0
         uStride = 0

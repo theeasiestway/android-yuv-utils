@@ -51,7 +51,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             ControllerVideo.destroyCamera()
             saved = false
         }
-
     }
 
     private fun requestPermissions() {
@@ -76,33 +75,18 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun processImage(image: Image) {
 
-        Log.d("efwfe", "format: ${image.format}")
+    //    val result = yuvUtils.scale(image, 1024, 768, Constants.FILTER_BOX)
 
-        val result = yuvUtils.scale(image, 1024, 768, Constants.FILTER_NONE)
+        Log.d("wefewfewf", "width: ${image.width}; height: ${image.height}")
 
-        val yuvImage = YuvImage(result, ImageFormat.NV21, 1024, 768, null)
+        val result = yuvUtils.rotate(image, Constants.ROTATE_90)
+
+        val yuvImage = YuvImage(result, ImageFormat.NV21, 480, 640, null)
 
         val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, 1024, 768), 50, out)
+        yuvImage.compressToJpeg(Rect(0, 0, 480, 640), 50, out)
         val imageBytes: ByteArray = out.toByteArray()
         val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
         vImageView.post { vImageView.setImageBitmap(bm) }
     }
-
-
-    /* if (saved) return
-
-     val rootFolder = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-     val file = File(rootFolder, "image.yuv")
-     if (!file.exists()) file.createNewFile()
-
-     val fos = FileOutputStream(file)
-     fos.write(result)
-     fos.flush()
-     fos.close()
-
-     saved = true
-
-    Log.d("edwee", "result size: ${result.size}")
-} */
 }
