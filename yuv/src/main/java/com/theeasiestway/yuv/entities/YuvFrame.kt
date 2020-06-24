@@ -1,4 +1,4 @@
-package com.theeasiestway.libyuv
+package com.theeasiestway.yuv.entities
 
 import android.media.Image
 import java.nio.ByteBuffer

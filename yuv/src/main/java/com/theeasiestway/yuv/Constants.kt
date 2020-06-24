@@ -1,4 +1,4 @@
-package com.theeasiestway.libyuv
+package com.theeasiestway.yuv
 
 //
 // Created by Loboda Alexey on 22.06.2020.
