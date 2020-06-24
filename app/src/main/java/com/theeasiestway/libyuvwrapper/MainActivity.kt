@@ -16,6 +16,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
 import com.theeasiestway.codec_h264.camera.ControllerVideo
+import com.theeasiestway.yuv.Constants
 import com.theeasiestway.yuv.YuvUtils
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
@@ -75,25 +76,22 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
     private fun processImage(image: Image) {
 
-        Log.d("wefewfewf", "width: ${image.width}; height: ${image.height}")
-
-            val result = yuvUtils.yuv420ToArgb(image)
+        val result = yuvUtils.yuv420ToArgb(image)
 
         //    val result = yuvUtils.mirror(image)
 
-        //    val result = yuvUtils.scale(image, 1024, 768, Constants.FILTER_BOX)
+        //    val result = yuvUtils.scale(image, 100, 100, Constants.FILTER_BOX)
 
         //    val result = yuvUtils.rotate(image, Constants.ROTATE_90)
 
-        val yuvImage = YuvImage(result.data, ImageFormat.NV21, result.width, result.height, null)
-
+        /*val yuvImage = YuvImage(result.asArray(), ImageFormat.NV21, result.width, result.height, null)
         val out = ByteArrayOutputStream()
         yuvImage.compressToJpeg(Rect(0, 0, result.width, result.height), 50, out)
         val imageBytes: ByteArray = out.toByteArray()
-        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)*/ // for displaying yuv
 
-       /* val bm = Bitmap.createBitmap(result.width, result.height, Bitmap.Config.ARGB_8888)
-        bm.copyPixelsFromBuffer(ByteBuffer.wrap(result.data)) */ // for displaying argb
+        val bm = Bitmap.createBitmap(result.width, result.height, Bitmap.Config.ARGB_8888)
+        bm.copyPixelsFromBuffer(ByteBuffer.wrap(result.asArray())) // for displaying argb
 
         vImageView.post { vImageView.setImageBitmap(bm) }
     }

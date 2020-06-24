@@ -9,6 +9,7 @@ object Constants {
     //
     // Scale
     //
+
     const val FILTER_NONE = 0
     const val FILTER_LINEAR = 1
     const val FILTER_BILINEAR = 2
@@ -17,6 +18,7 @@ object Constants {
     //
     // Rotate
     //
+
     const val ROTATE_0 = 0
     const val ROTATE_90 = 90
     const val ROTATE_180 = 180

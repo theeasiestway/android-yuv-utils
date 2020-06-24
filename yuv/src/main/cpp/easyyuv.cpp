@@ -15,44 +15,32 @@
 //
 
 extern "C"
-JNIEXPORT jbyteArray JNICALL
-Java_com_theeasiestway_yuv_YuvUtils_scale(JNIEnv *env, jobject thiz, jobject y,
-                                          jobject u, jobject v, jint yStride, jint uStride,
-                                          jint vStride, jint srcWidth, jint srcHeight,
-                                          jint dstWidth, jint dstHeight, jint filterMode) {
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_YuvUtils_scale__Ljava_nio_ByteBuffer_2Ljava_nio_ByteBuffer_2Ljava_nio_ByteBuffer_2IIILjava_nio_ByteBuffer_2Ljava_nio_ByteBuffer_2Ljava_nio_ByteBuffer_2IIIIIIII(
+        JNIEnv *env, jobject thiz, jobject y, jobject u, jobject v,
+        jint yStride, jint uStride, jint vStride,
+        jobject yOut, jobject uOut, jobject vOut,
+        jint yOutStride, jint uOutStride, jint vOutStride,
+        jint srcWidth, jint srcHeight, jint dstWidth, jint dstHeight, jint filterMode) {
 
     uint8_t *yNative = (uint8_t *) env->GetDirectBufferAddress(y);
     uint8_t *uNative = (uint8_t *) env->GetDirectBufferAddress(u);
     uint8_t *vNative = (uint8_t *) env->GetDirectBufferAddress(v);
 
-    int yOutSize = sizeof(uint8_t) * (dstWidth * dstHeight);
-    int uvOutSize = sizeof(uint8_t) * (dstWidth * dstHeight / 4);
-    int extra = dstWidth % 2 == 0 ? 0 : 1;
 
-    uint8_t *yOut = (uint8_t *) malloc((size_t) yOutSize);
-    uint8_t *uOut = (uint8_t *) malloc((size_t) uvOutSize);
-    uint8_t *vOut = (uint8_t *) malloc((size_t) uvOutSize);
+    uint8_t *yOutNative = (uint8_t *) env->GetDirectBufferAddress(yOut);
+    uint8_t *uOutNative = (uint8_t *) env->GetDirectBufferAddress(uOut);
+    uint8_t *vOutNative = (uint8_t *) env->GetDirectBufferAddress(vOut);
 
     libyuv::I420Scale(yNative, yStride,
                       uNative, uStride,
                       vNative, vStride,
                       srcWidth, srcHeight,
-                      yOut, dstWidth,
-                      uOut, dstWidth / 2 + extra,
-                      vOut, dstWidth / 2 + extra,
+                      yOutNative, yOutStride,
+                      uOutNative, uOutStride,
+                      vOutNative, vOutStride,
                       dstWidth, dstHeight,
                       libyuv::FilterMode(filterMode));
-
-    jbyteArray result = env->NewByteArray(yOutSize + uvOutSize * 2);
-    env->SetByteArrayRegion(result, 0, yOutSize, (jbyte *) yOut);
-    env->SetByteArrayRegion(result, yOutSize, uvOutSize, (jbyte *) uOut);
-    env->SetByteArrayRegion(result, yOutSize + uvOutSize, uvOutSize, (jbyte *) vOut);
-
-    free(yOut);
-    free(uOut);
-    free(vOut);
-
-    return result;
 }
 
 //
@@ -60,45 +48,29 @@ Java_com_theeasiestway_yuv_YuvUtils_scale(JNIEnv *env, jobject thiz, jobject y,
 //
 
 extern "C"
-JNIEXPORT jbyteArray JNICALL
-Java_com_theeasiestway_yuv_YuvUtils_rotate(JNIEnv *env, jobject thiz, jobject y,
-                                           jobject u, jobject v, jint yStride, jint uStride,
-                                           jint vStride, jint width, jint height, jint rotationMode) {
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_YuvUtils_rotate(JNIEnv *env, jobject thiz, jobject y, jobject u,
+                                           jobject v, jint yStride, jint uStride, jint vStride,
+                                           jobject yOut, jobject uOut, jobject vOut,
+                                           jint yOutStride, jint uOutStride, jint vOutStride,
+                                           jint width, jint height, jint rotationMode) {
 
     uint8_t *yNative = (uint8_t *) env->GetDirectBufferAddress(y);
     uint8_t *uNative = (uint8_t *) env->GetDirectBufferAddress(u);
     uint8_t *vNative = (uint8_t *) env->GetDirectBufferAddress(v);
 
-    int yOutSize = sizeof(uint8_t) * (width * height);
-    int uvOutSize = sizeof(uint8_t) * (width * height / 4);
-    int extra = width % 2 == 0 ? 0 : 1;
-
-    uint8_t *yOut = (uint8_t *) malloc((size_t) yOutSize);
-    uint8_t *uOut = (uint8_t *) malloc((size_t) uvOutSize);
-    uint8_t *vOut = (uint8_t *) malloc((size_t) uvOutSize);
-
-    int yOutStride = (rotationMode == 90 || rotationMode == 270) ? height : width;
-    int uvOutStride = yOutStride / 2 + extra;
+    uint8_t *yOutNative = (uint8_t *) env->GetDirectBufferAddress(yOut);
+    uint8_t *uOutNative = (uint8_t *) env->GetDirectBufferAddress(uOut);
+    uint8_t *vOutNative = (uint8_t *) env->GetDirectBufferAddress(vOut);
 
     libyuv::I420Rotate(yNative, yStride,
                        uNative, uStride,
                        vNative, vStride,
-                       yOut, yOutStride,
-                       uOut, uvOutStride,
-                       vOut, uvOutStride,
+                       yOutNative, yOutStride,
+                       uOutNative, uOutStride,
+                       vOutNative, vOutStride,
                        width, height,
                        libyuv::RotationMode(rotationMode));
-
-    jbyteArray result = env->NewByteArray(yOutSize + uvOutSize * 2);
-    env->SetByteArrayRegion(result, 0, yOutSize, (jbyte *) yOut);
-    env->SetByteArrayRegion(result, yOutSize, uvOutSize, (jbyte *) uOut);
-    env->SetByteArrayRegion(result, yOutSize + uvOutSize, uvOutSize, (jbyte *) vOut);
-
-    free(yOut);
-    free(uOut);
-    free(vOut);
-
-    return result;
 }
 
 //
@@ -106,41 +78,28 @@ Java_com_theeasiestway_yuv_YuvUtils_rotate(JNIEnv *env, jobject thiz, jobject y,
 //
 
 extern "C"
-JNIEXPORT jbyteArray JNICALL
-Java_com_theeasiestway_yuv_YuvUtils_mirror(JNIEnv *env, jobject thiz, jobject y,
-                                           jobject u, jobject v, jint yStride, jint uStride,
-                                           jint vStride, jint width, jint height) {
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_YuvUtils_mirror(JNIEnv *env, jobject thiz, jobject y, jobject u,
+                                           jobject v, jint yStride, jint uStride, jint vStride,
+                                           jobject yOut, jobject uOut, jobject vOut,
+                                           jint yOutStride, jint uOutStride, jint vOutStride,
+                                           jint width, jint height) {
 
     uint8_t *yNative = (uint8_t *) env->GetDirectBufferAddress(y);
     uint8_t *uNative = (uint8_t *) env->GetDirectBufferAddress(u);
     uint8_t *vNative = (uint8_t *) env->GetDirectBufferAddress(v);
 
-    int yOutSize = sizeof(uint8_t) * (width * height);
-    int uvOutSize = sizeof(uint8_t) * (width * height / 4);
-    int extra = width % 2 == 0 ? 0 : 1;
-
-    uint8_t *yOut = (uint8_t *) malloc((size_t) yOutSize);
-    uint8_t *uOut = (uint8_t *) malloc((size_t) uvOutSize);
-    uint8_t *vOut = (uint8_t *) malloc((size_t) uvOutSize);
+    uint8_t *yOutNative = (uint8_t *) env->GetDirectBufferAddress(yOut);
+    uint8_t *uOutNative = (uint8_t *) env->GetDirectBufferAddress(uOut);
+    uint8_t *vOutNative = (uint8_t *) env->GetDirectBufferAddress(vOut);
 
     libyuv::I420Mirror(yNative, yStride,
                        uNative, uStride,
                        vNative, vStride,
-                       yOut, width,
-                       uOut, width / 2 + extra,
-                       vOut, width / 2 + extra,
+                       yOutNative, yOutStride,
+                       uOutNative, uOutStride,
+                       vOutNative, vOutStride,
                        width, height);
-
-    jbyteArray result = env->NewByteArray(yOutSize + uvOutSize * 2);
-    env->SetByteArrayRegion(result, 0, yOutSize, (jbyte *) yOut);
-    env->SetByteArrayRegion(result, yOutSize, uvOutSize, (jbyte *) uOut);
-    env->SetByteArrayRegion(result, yOutSize + uvOutSize, uvOutSize, (jbyte *) vOut);
-
-    free(yOut);
-    free(uOut);
-    free(vOut);
-
-    return result;
 }
 
 //
@@ -148,31 +107,21 @@ Java_com_theeasiestway_yuv_YuvUtils_mirror(JNIEnv *env, jobject thiz, jobject y,
 //
 
 extern "C"
-JNIEXPORT jbyteArray JNICALL
+JNIEXPORT void JNICALL
 Java_com_theeasiestway_yuv_YuvUtils_yuv420ToArgb(JNIEnv *env, jobject thiz, jobject y, jobject u,
-                                                 jobject v, jint yStride, jint uStride,
-                                                 jint vStride, jint width, jint height) {
+                                                 jobject v, jint yStride, jint uStride, jint vStride,
+                                                 jobject out, jint outStride,
+                                                 jint width, jint height) {
 
     uint8_t *yNative = (uint8_t *) env->GetDirectBufferAddress(y);
     uint8_t *uNative = (uint8_t *) env->GetDirectBufferAddress(u);
     uint8_t *vNative = (uint8_t *) env->GetDirectBufferAddress(v);
 
-    int argbSize = sizeof(uint8_t) * (width * height) * 32;
-    int extra = width % 2 == 0 ? 0 : 1;
-
-    uint8_t *argb = (uint8_t *) malloc((size_t) argbSize);
+    uint8_t *outNative = (uint8_t *) env->GetDirectBufferAddress(out);
 
     libyuv::I420ToARGB(yNative, yStride,
                        vNative, vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
                        uNative, uStride,
-                       argb, width * 4 + extra,
+                       outNative, outStride,
                        width, height);
-
-    jbyteArray result = env->NewByteArray(argbSize);
-    env->SetByteArrayRegion(result, 0, argbSize, (jbyte *) argb);
-
-    free(argb);
-
-    return result;
 }
-

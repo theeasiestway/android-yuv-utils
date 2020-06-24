@@ -1,6 +1,5 @@
 package com.theeasiestway.yuv.entities
 
-import android.media.Image
 import java.nio.ByteBuffer
 
 //
@@ -20,41 +19,28 @@ class YuvFrame {
     var width: Int = 0; private set
     var height: Int = 0; private set
 
-    fun fill(image: Image) {
+    fun fill(y: ByteBuffer, u: ByteBuffer, v: ByteBuffer, yStride: Int, uStride: Int, vStride: Int, width: Int, height: Int) {
+        this.y = y
+        this.u = u
+        this.v = v
+        this.yStride = yStride
+        this.uStride = uStride
+        this.vStride = vStride
+        this.width = width
+        this.height = height
+    }
 
-        for (i in 0 until 3) {
-            val plane = image.planes[i]
-            when(i) {
-                0 -> {
-                    y = plane.buffer
-                    yStride = plane.rowStride
-                }
-                1 -> {
-                    u = plane.buffer
-                    uStride = plane.rowStride
-                }
-                2 -> {
-                    v = plane.buffer
-                    vStride = plane.rowStride
-                }
-            }
-        }
-
-        width = image.width
-        height = image.height
-
-        image.close()
+    fun asArray(): ByteArray {
+        return ByteBuffer.allocate(y.capacity() + u.capacity() + v.capacity()).put(y).put(u).put(v).array()
     }
 
     fun free() {
         y = ByteBuffer.allocate(1)
         u = ByteBuffer.allocate(1)
         v = ByteBuffer.allocate(1)
-
         yStride = 0
         uStride = 0
         vStride = 0
-
         width = 0
         height = 0
     }
