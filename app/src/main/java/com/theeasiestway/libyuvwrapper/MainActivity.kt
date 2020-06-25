@@ -46,20 +46,25 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     private var height = 0
     private var rotate = 0
     private var mirror = false
+    private var started = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         vCameraFacing = findViewById(R.id.vCameraFacing)
-        vCameraFacing.setImageResource(R.drawable.ic_camera_front_24dp)
+        vCameraFacing.setImageResource(R.drawable.ic_camera_rear_24dp)
         vCameraFacing.setOnClickListener {
             facing = if (facing == CameraSelector.LENS_FACING_FRONT) {
-                vCameraFacing.setImageResource(R.drawable.ic_camera_rear_24dp)
+                vCameraFacing.setImageResource(R.drawable.ic_camera_front_24dp)
                 CameraSelector.LENS_FACING_BACK
             } else {
-                vCameraFacing.setImageResource(R.drawable.ic_camera_front_24dp)
+                vCameraFacing.setImageResource(R.drawable.ic_camera_rear_24dp)
                 CameraSelector.LENS_FACING_FRONT
+            }
+            if (started) {
+                ControllerVideo.destroyCamera()
+                requestPermissions()
             }
         }
 
@@ -74,6 +79,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             vStop.visibility = View.GONE
             vPlay.visibility = View.VISIBLE
             ControllerVideo.destroyCamera()
+            started = false
         }
 
         vWidthLabel = findViewById(R.id.vWidthLabel)
@@ -103,10 +109,10 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         vRotate = findViewById(R.id.vRotate)
         vRotate.setOnClickListener { rotate = when(rotate) {
-            0 -> 90
-            90 -> 180
-            180 -> 270
-            else -> 0
+            0 -> Constants.ROTATE_90
+            90 -> Constants.ROTATE_180
+            180 -> Constants.ROTATE_270
+            else -> Constants.ROTATE_0
         }}
 
         vMirror = findViewById(R.id.vMirror)
@@ -131,26 +137,18 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         vStop.visibility = View.VISIBLE
         ControllerVideo.subscribe(javaClass.name) { image -> processImage(image) }
         ControllerVideo.initCamera(this, facing, vCameraView)
+        started = true
     }
 
     private fun processImage(image: Image) {
 
-        //    val result = yuvUtils.yuv420ToArgb(image)
+        var yuvFrame = yuvUtils.scale(image, width, height, Constants.FILTER_BOX)
+        if (mirror) yuvFrame = yuvUtils.mirror(yuvFrame)
+        yuvFrame = yuvUtils.rotate(yuvFrame, rotate)
+        val argbFrame = yuvUtils.yuv420ToArgb(yuvFrame)
 
-        //    val result = yuvUtils.mirror(image)
-
-        val result = yuvUtils.scale(image, width, height, Constants.FILTER_BOX)
-
-        //    val result = yuvUtils.rotate(image, Constants.ROTATE_90)
-
-        val yuvImage = YuvImage(result.asArray(), ImageFormat.NV21, result.width, result.height, null)
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, result.width, result.height), 50, out)
-        val imageBytes: ByteArray = out.toByteArray()
-        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size) // for displaying yuv
-
-        /* val bm = Bitmap.createBitmap(result.width, result.height, Bitmap.Config.ARGB_8888)
-        bm.copyPixelsFromBuffer(ByteBuffer.wrap(result.asArray())) */ // for displaying argb
+        val bm = Bitmap.createBitmap(argbFrame.width, argbFrame.height, Bitmap.Config.ARGB_8888)
+        bm.copyPixelsFromBuffer(ByteBuffer.wrap(argbFrame.asArray())) // for displaying argb
 
         vImageView.post { vImageView.setImageBitmap(bm) }
     }

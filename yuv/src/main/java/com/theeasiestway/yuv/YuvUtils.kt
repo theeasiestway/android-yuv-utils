@@ -49,6 +49,29 @@ class YuvUtils {
         return outFrame
     }
 
+    fun scale(yuvFrame: YuvFrame, dstWidth: Int, dstHeight: Int, filerMode: Int): YuvFrame {
+        require(filerMode in 0..3) { "filterMode: $filerMode is not unsupported. Check supported values in com.theeasiestway.libyuv.Constant.kt" }
+        val outFrame = FramesFactory.instanceYuv(dstWidth, dstHeight)
+        scale(yuvFrame.y,
+            yuvFrame.u,
+            yuvFrame.v,
+            yuvFrame.yStride,
+            yuvFrame.uStride,
+            yuvFrame.vStride,
+            outFrame.y,
+            outFrame.u,
+            outFrame.v,
+            outFrame.yStride,
+            outFrame.uStride,
+            outFrame.vStride,
+            yuvFrame.width,
+            yuvFrame.height,
+            dstWidth,
+            dstHeight,
+            filerMode)
+        return outFrame
+    }
+
     private external fun scale(y: ByteBuffer,
                                u: ByteBuffer,
                                v: ByteBuffer,
@@ -92,6 +115,27 @@ class YuvUtils {
         return outFrame
     }
 
+    fun rotate(yuvFrame: YuvFrame, rotationMode: Int): YuvFrame {
+        require(rotationMode == 0 || rotationMode == 90 || rotationMode == 180 || rotationMode == 270) { "rotationMode: $rotationMode is not unsupported. Check supported values in com.theeasiestway.libyuv.Constant.kt" }
+        val outFrame = FramesFactory.instanceYuv(yuvFrame.width, yuvFrame.height, rotationMode)
+        rotate(yuvFrame.y,
+            yuvFrame.u,
+            yuvFrame.v,
+            yuvFrame.yStride,
+            yuvFrame.uStride,
+            yuvFrame.vStride,
+            outFrame.y,
+            outFrame.u,
+            outFrame.v,
+            outFrame.yStride,
+            outFrame.uStride,
+            outFrame.vStride,
+            yuvFrame.width,
+            yuvFrame.height,
+            rotationMode)
+        return outFrame
+    }
+
     private external fun rotate(y: ByteBuffer,
                                 u: ByteBuffer,
                                 v: ByteBuffer,
@@ -131,6 +175,25 @@ class YuvUtils {
         return outFrame
     }
 
+    fun mirror(yuvFrame: YuvFrame): YuvFrame {
+        val outFrame = FramesFactory.instanceYuv(yuvFrame.width, yuvFrame.height)
+        mirror(yuvFrame.y,
+            yuvFrame.u,
+            yuvFrame.v,
+            yuvFrame.yStride,
+            yuvFrame.uStride,
+            yuvFrame.vStride,
+            outFrame.y,
+            outFrame.u,
+            outFrame.v,
+            outFrame.yStride,
+            outFrame.uStride,
+            outFrame.vStride,
+            yuvFrame.width,
+            yuvFrame.height)
+        return outFrame
+    }
+
     private external fun mirror(y: ByteBuffer,
                                 u: ByteBuffer,
                                 v: ByteBuffer,
@@ -162,6 +225,21 @@ class YuvUtils {
             outFrame.dataStride,
             image.width,
             image.height)
+        return outFrame
+    }
+
+    fun yuv420ToArgb(yuvFrame: YuvFrame): ArgbFrame {
+        val outFrame = FramesFactory.instanceArgb(yuvFrame.width, yuvFrame.height)
+        yuv420ToArgb(yuvFrame.y,
+            yuvFrame.u,
+            yuvFrame.v,
+            yuvFrame.yStride,
+            yuvFrame.uStride,
+            yuvFrame.vStride,
+            outFrame.data,
+            outFrame.dataStride,
+            yuvFrame.width,
+            yuvFrame.height)
         return outFrame
     }
 
