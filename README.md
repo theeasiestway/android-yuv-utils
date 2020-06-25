@@ -23,7 +23,7 @@ val image = ...                                              // getting an image
 var yuvFrame = yuvUtils.convertToI420(image)                 // this step isn't mandatory but it may help you in case if the colors of the output frame (after scale, rotate etc.) are distorted  
 ```
 
-#### Scale
+#### Scale:
 ```kotlin
 /* the first way */
 val image = ...                                             // getting an image from Camera2 or CameraX api
@@ -37,7 +37,7 @@ val scaledHeight = yuvFrame.height * 2                      // of a frame and fo
 yuvFrame = yuvUtils.scale(yuvFrame, scaledWidth, scaledHeight, Constants.FILTER_BOX)
 ```
 
-#### Rotate
+#### Rotate:
 ```kotlin
 val rotate = Constants.ROTATE_270                           // setting the rotation angle
 yuvFrame = yuvUtils.rotate(image, rotate)
@@ -45,7 +45,7 @@ yuvFrame = yuvUtils.rotate(image, rotate)
 yuvFrame = yuvUtils.rotate(yuvFrame, rotate)
 ```
 
-#### Mirror
+#### Mirror:
 ```kotlin
 /* for mirror horizontally */
 yuvFrame = yuvUtils.mirrorH(image)
@@ -58,7 +58,7 @@ yuvFrame = yuvUtils.mirrorV(image)
 yuvFrame = yuvUtils.mirrorV(yuvFrame)
 ```
 
-#### Convert to ARGB
+#### Convert to ARGB:
 ```kotlin
 val argbFrame = yuvUtils.yuv420ToArgb(image)
 /* or */
