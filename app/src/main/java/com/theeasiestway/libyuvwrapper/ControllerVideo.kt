@@ -69,7 +69,6 @@ object ControllerVideo {
 
             val imageAnalysis = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .setTargetResolution(Size(640, 480))
                 .build()
             imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { imageProxy ->
                 if (imageProxy.image == null || imageProxy.planes.size < 3) return@Analyzer

@@ -78,7 +78,7 @@ Java_com_theeasiestway_yuv_YuvUtils_rotate(JNIEnv *env, jobject thiz, jobject y,
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_theeasiestway_yuv_YuvUtils_mirror(JNIEnv *env, jobject thiz, jobject y, jobject u,
+Java_com_theeasiestway_yuv_YuvUtils_mirrorH(JNIEnv *env, jobject thiz, jobject y, jobject u,
                                            jobject v, jint yStride, jint uStride, jint vStride,
                                            jobject yOut, jobject uOut, jobject vOut,
                                            jint yOutStride, jint uOutStride, jint vOutStride,
@@ -122,5 +122,36 @@ Java_com_theeasiestway_yuv_YuvUtils_yuv420ToArgb(JNIEnv *env, jobject thiz, jobj
                        vNative, vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
                        uNative, uStride,
                        outNative, outStride,
+                       width, height);
+
+}
+
+//
+// Convert to I420
+//
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_YuvUtils_convertToI420(JNIEnv *env, jobject thiz, jobject y, jobject u,
+                                            jobject v, jint yStride, jint uStride, jint vStride, jint srcPixelStrideUv,
+                                            jobject yOut, jobject uOut, jobject vOut,
+                                            jint yOutStride, jint uOutStride, jint vOutStride,
+                                            jint width, jint height) {
+
+    uint8_t *yNative = (uint8_t *) env->GetDirectBufferAddress(y);
+    uint8_t *uNative = (uint8_t *) env->GetDirectBufferAddress(u);
+    uint8_t *vNative = (uint8_t *) env->GetDirectBufferAddress(v);
+
+    uint8_t *yOutNative = (uint8_t *) env->GetDirectBufferAddress(yOut);
+    uint8_t *uOutNative = (uint8_t *) env->GetDirectBufferAddress(uOut);
+    uint8_t *vOutNative = (uint8_t *) env->GetDirectBufferAddress(vOut);
+
+    libyuv::Android420ToI420(yNative, yStride,
+                       uNative, uStride,
+                       vNative, vStride,
+                       srcPixelStrideUv,
+                       yOutNative, yOutStride,
+                       uOutNative, uOutStride,
+                       vOutNative, vOutStride,
                        width, height);
 }

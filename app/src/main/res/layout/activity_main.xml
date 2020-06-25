@@ -87,7 +87,6 @@
             android:id="@+id/vWidth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:progress="1"
             android:max="10"/>
 
         <TextView
@@ -100,7 +99,6 @@
             android:id="@+id/vHeight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:progress="1"
             android:max="10"/>
 
         <TextView
@@ -122,10 +120,17 @@
                 android:text="Rotate"/>
 
             <Button
-                android:id="@+id/vMirror"
+                android:id="@+id/vMirrorH"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Mirror"
+                android:text="MirrorH"
+                android:layout_marginStart="8dp"/>
+
+            <Button
+                android:id="@+id/vMirrorV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MirrorV"
                 android:layout_marginStart="8dp"/>
         </LinearLayout>
     </LinearLayout>

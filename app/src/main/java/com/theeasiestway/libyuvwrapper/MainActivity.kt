@@ -16,7 +16,6 @@ import androidx.lifecycle.LifecycleOwner
 import com.theeasiestway.codec_h264.camera.ControllerVideo
 import com.theeasiestway.yuv.Constants
 import com.theeasiestway.yuv.YuvUtils
-import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 
@@ -39,14 +38,19 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     private lateinit var vHeight: SeekBar
     private lateinit var vHeightLabel: TextView
     private lateinit var vRotate: Button
-    private lateinit var vMirror: Button
+    private lateinit var vMirrorH: Button
+    private lateinit var vMirrorV: Button
 
     private var facing = CameraSelector.LENS_FACING_FRONT
+    private var widthCurrent = 0
+    private var heightCurrent = 0
     private var width = 0
     private var height = 0
     private var rotate = 0
-    private var mirror = false
+    private var mirrorH = false
+    private var mirrorV = false
     private var started = false
+    private var needToUpdateWH = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +67,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                 CameraSelector.LENS_FACING_FRONT
             }
             if (started) {
-                ControllerVideo.destroyCamera()
+                stopCamera()
                 requestPermissions()
             }
         }
@@ -75,37 +79,26 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         vPlay.setOnClickListener { requestPermissions() }
 
         vStop = findViewById(R.id.vStop)
-        vStop.setOnClickListener {
-            vStop.visibility = View.GONE
-            vPlay.visibility = View.VISIBLE
-            ControllerVideo.destroyCamera()
-            started = false
-        }
+        vStop.setOnClickListener { stopCamera() }
 
         vWidthLabel = findViewById(R.id.vWidthLabel)
         vHeightLabel = findViewById(R.id.vHeightLabel)
 
         vWidth = findViewById(R.id.vWidth)
+        vWidth.isEnabled = false
         vWidth.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                width = 640 + progress * 100
-                vWidthLabel.text = width.toString()
-            }
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) { updateWidth(progress) }
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
-        vWidth.progress = 0
 
         vHeight = findViewById(R.id.vHeight)
+        vHeight.isEnabled = false
         vHeight.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                height = 480 + progress * 100
-                vHeightLabel.text = height.toString()
-            }
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) { updateHeight(progress) }
             override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
             override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
         })
-        vHeight.progress = 0
 
         vRotate = findViewById(R.id.vRotate)
         vRotate.setOnClickListener { rotate = when(rotate) {
@@ -115,8 +108,21 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             else -> Constants.ROTATE_0
         }}
 
-        vMirror = findViewById(R.id.vMirror)
-        vMirror.setOnClickListener { mirror = !mirror }
+        vMirrorH = findViewById(R.id.vMirrorH)
+        vMirrorH.setOnClickListener { mirrorH = !mirrorH }
+
+        vMirrorV = findViewById(R.id.vMirrorV)
+        vMirrorV.setOnClickListener { mirrorV = !mirrorV }
+    }
+
+    private fun updateHeight(progress: Int = 0) {
+        heightCurrent = height + progress * 100
+        vHeightLabel.text = heightCurrent.toString()
+    }
+
+    private fun updateWidth(progress: Int = 0) {
+        widthCurrent = width + progress * 100
+        vWidthLabel.text = widthCurrent.toString()
     }
 
     private fun requestPermissions() {
@@ -140,11 +146,43 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         started = true
     }
 
+    private fun stopCamera() {
+        vStop.visibility = View.GONE
+        vPlay.visibility = View.VISIBLE
+        vWidth.isEnabled = false
+        vHeight.isEnabled = false
+        ControllerVideo.destroyCamera()
+        started = false
+        vWidth.progress = 0
+        vHeight.progress = 0
+        rotate = Constants.ROTATE_0
+        mirrorH = false
+        mirrorV = false
+        needToUpdateWH = true
+    }
+
     private fun processImage(image: Image) {
 
-        var yuvFrame = yuvUtils.scale(image, width, height, Constants.FILTER_BOX)
-        if (mirror) yuvFrame = yuvUtils.mirror(yuvFrame)
+        width = image.width
+        height = image.height
+
+        if(needToUpdateWH) {
+            runOnUiThread {
+                updateWidth()
+                updateHeight()
+                needToUpdateWH = false
+                vWidth.isEnabled = true
+                vHeight.isEnabled = true
+            }
+        }
+
+        if (widthCurrent <= 0 || heightCurrent <= 0) return
+
+        var yuvFrame = yuvUtils.convertToI420(image)
+        yuvFrame = yuvUtils.scale(yuvFrame, widthCurrent, heightCurrent, Constants.FILTER_BOX)
         yuvFrame = yuvUtils.rotate(yuvFrame, rotate)
+        if (mirrorH) yuvFrame = yuvUtils.mirrorH(yuvFrame)
+        if (mirrorV) yuvFrame = yuvUtils.mirrorV(yuvFrame)
         val argbFrame = yuvUtils.yuv420ToArgb(yuvFrame)
 
         val bm = Bitmap.createBitmap(argbFrame.width, argbFrame.height, Bitmap.Config.ARGB_8888)

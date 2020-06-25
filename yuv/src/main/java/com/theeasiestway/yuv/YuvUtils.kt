@@ -156,9 +156,9 @@ class YuvUtils {
     // Mirror
     //
 
-    fun mirror(image: Image): YuvFrame {
+    fun mirrorH(image: Image): YuvFrame {
         val outFrame = FramesFactory.instanceYuv(image.width, image.height)
-        mirror(image.planes[0].buffer,
+        mirrorH(image.planes[0].buffer,
             image.planes[1].buffer,
             image.planes[2].buffer,
             image.planes[0].rowStride,
@@ -175,9 +175,9 @@ class YuvUtils {
         return outFrame
     }
 
-    fun mirror(yuvFrame: YuvFrame): YuvFrame {
+    fun mirrorH(yuvFrame: YuvFrame): YuvFrame {
         val outFrame = FramesFactory.instanceYuv(yuvFrame.width, yuvFrame.height)
-        mirror(yuvFrame.y,
+        mirrorH(yuvFrame.y,
             yuvFrame.u,
             yuvFrame.v,
             yuvFrame.yStride,
@@ -194,20 +194,60 @@ class YuvUtils {
         return outFrame
     }
 
-    private external fun mirror(y: ByteBuffer,
-                                u: ByteBuffer,
-                                v: ByteBuffer,
-                                yStride: Int,
-                                uStride: Int,
-                                vStride: Int,
-                                yOut: ByteBuffer,
-                                uOut: ByteBuffer,
-                                vOut: ByteBuffer,
-                                yOutStride: Int,
-                                uOutStride: Int,
-                                vOutStride: Int,
-                                width: Int,
-                                height: Int)
+    fun mirrorV(image: Image): YuvFrame {
+        val outFrame = FramesFactory.instanceYuv(image.width, image.height)
+        rotate(image.planes[0].buffer,
+            image.planes[1].buffer,
+            image.planes[2].buffer,
+            image.planes[0].rowStride,
+            image.planes[1].rowStride,
+            image.planes[2].rowStride,
+            outFrame.y,
+            outFrame.u,
+            outFrame.v,
+            outFrame.yStride,
+            outFrame.uStride,
+            outFrame.vStride,
+            image.width,
+            -image.height,
+            Constants.ROTATE_0)
+        return outFrame
+    }
+
+    fun mirrorV(yuvFrame: YuvFrame): YuvFrame {
+        val outFrame = FramesFactory.instanceYuv(yuvFrame.width, yuvFrame.height)
+        rotate(yuvFrame.y,
+            yuvFrame.u,
+            yuvFrame.v,
+            yuvFrame.yStride,
+            yuvFrame.uStride,
+            yuvFrame.vStride,
+            outFrame.y,
+            outFrame.u,
+            outFrame.v,
+            outFrame.yStride,
+            outFrame.uStride,
+            outFrame.vStride,
+            yuvFrame.width,
+            -yuvFrame.height,
+            Constants.ROTATE_0)
+        return outFrame
+    }
+
+    private external fun mirrorH(y: ByteBuffer,
+                                 u: ByteBuffer,
+                                 v: ByteBuffer,
+                                 yStride: Int,
+                                 uStride: Int,
+                                 vStride: Int,
+                                 yOut: ByteBuffer,
+                                 uOut: ByteBuffer,
+                                 vOut: ByteBuffer,
+                                 yOutStride: Int,
+                                 uOutStride: Int,
+                                 vOutStride: Int,
+                                 width: Int,
+                                 height: Int)
 
     //
     // YUV to ARGB
@@ -253,4 +293,44 @@ class YuvUtils {
                                       outStride: Int,
                                       width: Int,
                                       height: Int)
+
+    //
+    // Convert Android YUV to libyuv YUV
+    //
+
+    fun convertToI420(image: Image): YuvFrame {
+        val outFrame = FramesFactory.instanceYuv(image.width, image.height)
+        convertToI420(image.planes[0].buffer,
+            image.planes[1].buffer,
+            image.planes[2].buffer,
+            image.planes[0].rowStride,
+            image.planes[1].rowStride,
+            image.planes[2].rowStride,
+            image.planes[2].pixelStride,
+            outFrame.y,
+            outFrame.u,
+            outFrame.v,
+            outFrame.yStride,
+            outFrame.uStride,
+            outFrame.vStride,
+            image.width,
+            image.height)
+        return outFrame
+    }
+
+    private external fun convertToI420(y: ByteBuffer,
+                                       u: ByteBuffer,
+                                       v: ByteBuffer,
+                                       yStride: Int,
+                                       uStride: Int,
+                                       vStride: Int,
+                                       srcPixelStrideUv: Int,
+                                       yOut: ByteBuffer,
+                                       uOut: ByteBuffer,
+                                       vOut: ByteBuffer,
+                                       yOutStride: Int,
+                                       uOutStride: Int,
+                                       vOutStride: Int,
+                                       width: Int,
+                                       height: Int)
 }
