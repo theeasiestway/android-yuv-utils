@@ -1,42 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:fillViewport="true"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginBottom="16dp">
-
-        <androidx.camera.view.PreviewView
-            android:id="@+id/vCameraPreview"
-            android:layout_width="100dp"
-            android:layout_height="100dp"/>
-
-        <Space
-            android:layout_width="8dp"
-            android:layout_height="match_parent"/>
+        android:orientation="vertical"
+        android:gravity="center">
 
         <ImageView
-            android:id="@+id/vImageView"
+            android:id="@+id/vCameraFacing"
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/vCameraPreview"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Camera preview"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_marginStart="16dp">
+
+                <ImageView
+                    android:id="@+id/vImageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:scaleType="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Result"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/vPlay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Play"/>
+
+        <Button
+            android:id="@+id/vStop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:visibility="gone"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp"/>
+
+        <SeekBar
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:id="@+id/vWidth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="1"
+            android:max="10"/>
+
+        <TextView
+            android:id="@+id/vWidthLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
+        <SeekBar
+            style="@style/Widget.AppCompat.SeekBar.Discrete"
+            android:id="@+id/vHeight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progress="1"
+            android:max="10"/>
+
+        <TextView
+            android:id="@+id/vHeightLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/vRotate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rotate"/>
+
+            <Button
+                android:id="@+id/vMirror"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mirror"/>
+        </LinearLayout>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/vPlay"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Play"/>
-
-    <Button
-        android:id="@+id/vStop"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Stop"
-        android:visibility="gone"/>
-</LinearLayout>
+</ScrollView>

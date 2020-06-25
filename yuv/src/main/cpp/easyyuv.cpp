@@ -9,7 +9,6 @@
 // Created by Loboda Alexey on 22.06.2020.
 //
 
-
 //
 // Scale
 //

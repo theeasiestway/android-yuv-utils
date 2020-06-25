@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.hardware.display.DisplayManager
 import android.media.Image
 import android.util.Log
+import android.util.Size
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -66,7 +67,10 @@ object ControllerVideo {
 
             val cameraSelector = CameraSelector.Builder().requireLensFacing(facing).build()
 
-            val imageAnalysis = ImageAnalysis.Builder().setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .setTargetResolution(Size(640, 480))
+                .build()
             imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { imageProxy ->
                 if (imageProxy.image == null || imageProxy.planes.size < 3) return@Analyzer
 
