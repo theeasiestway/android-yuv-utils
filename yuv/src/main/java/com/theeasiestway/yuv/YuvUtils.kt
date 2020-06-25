@@ -318,6 +318,26 @@ class YuvUtils {
         return outFrame
     }
 
+    fun convertToI420(yuvFrame: YuvFrame, uvPixelStride: Int): YuvFrame {
+        val outFrame = FramesFactory.instanceYuv(yuvFrame.width, yuvFrame.height)
+        convertToI420(yuvFrame.y,
+            yuvFrame.u,
+            yuvFrame.v,
+            yuvFrame.yStride,
+            yuvFrame.uStride,
+            yuvFrame.vStride,
+            uvPixelStride,
+            outFrame.y,
+            outFrame.u,
+            outFrame.v,
+            outFrame.yStride,
+            outFrame.uStride,
+            outFrame.vStride,
+            yuvFrame.width,
+            yuvFrame.height)
+        return outFrame
+    }
+
     private external fun convertToI420(y: ByteBuffer,
                                        u: ByteBuffer,
                                        v: ByteBuffer,

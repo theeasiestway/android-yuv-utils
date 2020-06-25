@@ -79,10 +79,10 @@ Java_com_theeasiestway_yuv_YuvUtils_rotate(JNIEnv *env, jobject thiz, jobject y,
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_theeasiestway_yuv_YuvUtils_mirrorH(JNIEnv *env, jobject thiz, jobject y, jobject u,
-                                           jobject v, jint yStride, jint uStride, jint vStride,
-                                           jobject yOut, jobject uOut, jobject vOut,
-                                           jint yOutStride, jint uOutStride, jint vOutStride,
-                                           jint width, jint height) {
+                                            jobject v, jint yStride, jint uStride, jint vStride,
+                                            jobject yOut, jobject uOut, jobject vOut,
+                                            jint yOutStride, jint uOutStride, jint vOutStride,
+                                            jint width, jint height) {
 
     uint8_t *yNative = (uint8_t *) env->GetDirectBufferAddress(y);
     uint8_t *uNative = (uint8_t *) env->GetDirectBufferAddress(u);
@@ -133,10 +133,10 @@ Java_com_theeasiestway_yuv_YuvUtils_yuv420ToArgb(JNIEnv *env, jobject thiz, jobj
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_theeasiestway_yuv_YuvUtils_convertToI420(JNIEnv *env, jobject thiz, jobject y, jobject u,
-                                            jobject v, jint yStride, jint uStride, jint vStride, jint srcPixelStrideUv,
-                                            jobject yOut, jobject uOut, jobject vOut,
-                                            jint yOutStride, jint uOutStride, jint vOutStride,
-                                            jint width, jint height) {
+                                                  jobject v, jint yStride, jint uStride, jint vStride, jint srcPixelStrideUv,
+                                                  jobject yOut, jobject uOut, jobject vOut,
+                                                  jint yOutStride, jint uOutStride, jint vOutStride,
+                                                  jint width, jint height) {
 
     uint8_t *yNative = (uint8_t *) env->GetDirectBufferAddress(y);
     uint8_t *uNative = (uint8_t *) env->GetDirectBufferAddress(u);
@@ -147,11 +147,11 @@ Java_com_theeasiestway_yuv_YuvUtils_convertToI420(JNIEnv *env, jobject thiz, job
     uint8_t *vOutNative = (uint8_t *) env->GetDirectBufferAddress(vOut);
 
     libyuv::Android420ToI420(yNative, yStride,
-                       uNative, uStride,
-                       vNative, vStride,
-                       srcPixelStrideUv,
-                       yOutNative, yOutStride,
-                       uOutNative, uOutStride,
-                       vOutNative, vOutStride,
-                       width, height);
+                             uNative, uStride,
+                             vNative, vStride,
+                             srcPixelStrideUv,
+                             yOutNative, yOutStride,
+                             uOutNative, uOutStride,
+                             vOutNative, vOutStride,
+                             width, height);
 }

@@ -2,11 +2,10 @@ package com.theeasiestway.libyuvwrapper
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.*
+import android.graphics.Bitmap
 import android.media.Image
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -18,7 +17,6 @@ import com.theeasiestway.yuv.Constants
 import com.theeasiestway.yuv.YuvUtils
 import java.nio.ByteBuffer
 
-
 //
 // Created by Loboda Alexey on 22.06.2020.
 //
@@ -26,7 +24,6 @@ import java.nio.ByteBuffer
 class MainActivity : AppCompatActivity(), LifecycleOwner {
 
     private val PERMISSION_CAMERA = Manifest.permission.CAMERA
-    private val PERMISSION_WRITE = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private val yuvUtils = YuvUtils()
     private lateinit var vCameraFacing: ImageView
     private lateinit var vCameraView: PreviewView
@@ -126,14 +123,12 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     private fun requestPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) requestPermissions(arrayOf(PERMISSION_CAMERA, PERMISSION_WRITE), 1)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) requestPermissions(arrayOf(PERMISSION_CAMERA), 1)
         else startCamera()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == 1 &&
-            permissions[0] == PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED &&
-            permissions[1] == PERMISSION_WRITE && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+        if (requestCode == 1 && permissions[0] == PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED)
             startCamera()
         else Toast.makeText(this, "App doesn't have enough permissions to continue", Toast.LENGTH_LONG).show()
     }
