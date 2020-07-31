@@ -6,7 +6,7 @@
 #include "LibyuvWrapper.h"
 #include "factories/FramesFactory.h"
 
-YuvFrame& LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height) {
+YuvFrame* LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height) {
     YuvFrame *yuvFrame = instanceYuv(width, height);
 
     libyuv::Android420ToI420(y, yStride,
@@ -18,10 +18,10 @@ YuvFrame& LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride,
                              yuvFrame->v.data(), yuvFrame->vStride,
                              width, height);
 
-    return *yuvFrame;
+    return yuvFrame;
 }
 
-YuvFrame& LibyuvWrapper::scale(YuvFrame& in, int scaleWidth, int scaleHeight, int scaleFilter) {
+void LibyuvWrapper::scale(YuvFrame& in, int scaleWidth, int scaleHeight, int scaleFilter) {
     if (scaleWidth > 0 && scaleHeight > 0) {
         YuvFrame* temp = instanceYuv(scaleWidth, scaleHeight);
 
@@ -37,10 +37,9 @@ YuvFrame& LibyuvWrapper::scale(YuvFrame& in, int scaleWidth, int scaleHeight, in
         in.update(*temp);
         delete temp;
     }
-    return in;
 }
 
-YuvFrame& LibyuvWrapper::rotate(YuvFrame &in, int rotationMode) {
+void LibyuvWrapper::rotate(YuvFrame &in, int rotationMode) {
     if (rotationMode > 0) {
         YuvFrame *temp = instanceYuv(in.width, in.height, rotationMode);
         libyuv::I420Rotate(in.y.data(), in.yStride,
@@ -54,10 +53,9 @@ YuvFrame& LibyuvWrapper::rotate(YuvFrame &in, int rotationMode) {
         in.update(*temp);
         delete temp;
     }
-    return in;
 }
 
-YuvFrame& LibyuvWrapper::mirrorH(YuvFrame &in) {
+void LibyuvWrapper::mirrorH(YuvFrame &in) {
     YuvFrame *temp = instanceYuv(in.width, in.height);
     libyuv::I420Mirror(in.y.data(), in.yStride,
                        in.u.data(), in.uStride,
@@ -69,10 +67,9 @@ YuvFrame& LibyuvWrapper::mirrorH(YuvFrame &in) {
 
     in.update(*temp);
     delete temp;
-    return in;
 }
 
-YuvFrame& LibyuvWrapper::mirrorV(YuvFrame &in) {
+void LibyuvWrapper::mirrorV(YuvFrame &in) {
     YuvFrame *temp = instanceYuv(in.width, in.height, 0);
     libyuv::I420Rotate(in.y.data(), in.yStride,
                        in.u.data(), in.uStride,
@@ -84,10 +81,9 @@ YuvFrame& LibyuvWrapper::mirrorV(YuvFrame &in) {
 
     in.update(*temp);
     delete temp;
-    return in;
 }
 
-RgbFrame& LibyuvWrapper::toArgbFrame(YuvFrame &in) {
+RgbFrame* LibyuvWrapper::toArgbFrame(YuvFrame &in) {
 
     RgbFrame *temp = instanceArgb(in.width, in.height);
 
@@ -97,18 +93,18 @@ RgbFrame& LibyuvWrapper::toArgbFrame(YuvFrame &in) {
                        temp->data.data(), temp->stride,
                        in.width, in.height);
     delete &in;
-    return *temp;
+    return temp;
 }
 
-RgbFrame& LibyuvWrapper::toRgb565Frame(YuvFrame &in) {
+RgbFrame* LibyuvWrapper::toRgb565Frame(YuvFrame &in) {
     RgbFrame *temp = instanceRgb565(in.width, in.height);
 
     libyuv::I420ToRGB565(in.y.data(), in.yStride,
-                       in.u.data(), in.vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
-                       in.v.data(), in.uStride,
-                       temp->data.data(), temp->stride,
-                       in.width, in.height);
+                         in.u.data(), in.vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
+                         in.v.data(), in.uStride,
+                         temp->data.data(), temp->stride,
+                         in.width, in.height);
 
     delete &in;
-    return *temp;
+    return temp;
 }

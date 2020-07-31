@@ -217,7 +217,7 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     // to I420
     //
 
-    YuvFrame yuvFrame = LibyuvWrapper::to420((uint8_t *) env->GetDirectBufferAddress(y), yStride,
+    YuvFrame *yuvFrame = LibyuvWrapper::to420((uint8_t *) env->GetDirectBufferAddress(y), yStride,
                                               (uint8_t *) env->GetDirectBufferAddress(u), uStride,
                                               (uint8_t *) env->GetDirectBufferAddress(v), vStride,
                                               uvPixelStride, width, height);
@@ -226,31 +226,32 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     // Scale
     //
 
-    if (scaleWidth > 0 && scaleHeight > 0) yuvFrame = LibyuvWrapper::scale(yuvFrame, scaleWidth, scaleHeight, scaleFilter);
+    if (scaleWidth > 0 && scaleHeight > 0) LibyuvWrapper::scale(*yuvFrame, scaleWidth, scaleHeight, scaleFilter);
 
     //
     // Rotate
     //
 
-    if (rotationMode > 0) yuvFrame = LibyuvWrapper::rotate(yuvFrame, rotationMode);
+    if (rotationMode > 0) LibyuvWrapper::rotate(*yuvFrame, rotationMode);
 
     //
     // MirrorH
     //
 
-    if (mirrorH) yuvFrame = LibyuvWrapper::mirrorH(yuvFrame);
+    if (mirrorH) LibyuvWrapper::mirrorH(*yuvFrame);
 
     //
     // MirrorV
     //
 
-    if (mirrorV) yuvFrame = LibyuvWrapper::mirrorV(yuvFrame);
+    if (mirrorV) LibyuvWrapper::mirrorV(*yuvFrame);
 
     //
     // to ARGB
     //
 
     if (returnType == LibyuvWrapper::RETURN_ARGB) {
-
+        RgbFrame *rgbFrame = LibyuvWrapper::toArgbFrame(*yuvFrame);
+        return *EntitiesFactory::instanceArgb(*rgbFrame, *env);
     }
 }

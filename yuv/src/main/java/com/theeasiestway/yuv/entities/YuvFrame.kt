@@ -90,11 +90,11 @@ class YuvFrame: Frame() {
         height = 0
     }
 
-    fun getY() = getY(nativePointer)
-    fun getU() = getU(nativePointer)
-    fun getV() = getV(nativePointer)
+    fun getBytesY() = getY(nativePointer)
+    fun getBytesU() = getU(nativePointer)
+    fun getBytesV() = getV(nativePointer)
 
-    private external fun getY(pointer: Int): ByteBuffer
-    private external fun getU(pointer: Int): ByteBuffer
-    private external fun getV(pointer: Int): ByteBuffer
+    private external fun getY(pointer: Long): ByteBuffer
+    private external fun getU(pointer: Long): ByteBuffer
+    private external fun getV(pointer: Long): ByteBuffer
 }

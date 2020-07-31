@@ -6,6 +6,7 @@
 #define LIBYUVWRAPPER_RGBFRAME_H
 
 #include <vector>
+#include <string>
 
 class RgbFrame {
 

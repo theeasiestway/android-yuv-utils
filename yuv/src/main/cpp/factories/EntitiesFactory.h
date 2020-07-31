@@ -7,13 +7,14 @@
 
 #include <jni.h>
 #include "../entities/YuvFrame.h"
+#include "../entities/RgbFrame.h"
 
 class EntitiesFactory {
 
 public:
 
-    static jobject instanceArgb(YuvFrame &frame, );
-    static jobject instanceRgb565(YuvFrame &frame);
+    static jobject* instanceArgb(RgbFrame &frame, JNIEnv& env);
+    static jobject* instanceRgb565(RgbFrame &frame);
 };
 
 

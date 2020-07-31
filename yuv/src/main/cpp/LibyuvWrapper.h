@@ -17,19 +17,19 @@ public:
     static const int RETURN_ARGB = 2;
     static const int RETURN_RGB565 = 3;
 
-    static YuvFrame& to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height);
+    static YuvFrame* to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height);
 
-    static YuvFrame& scale(YuvFrame& in, int scaleWidth, int scaleHeight, int scaleFilter);
+    static void scale(YuvFrame& in, int scaleWidth, int scaleHeight, int scaleFilter);
 
-    static YuvFrame& rotate(YuvFrame& in, int rotationMode);
+    static void rotate(YuvFrame& in, int rotationMode);
 
-    static YuvFrame& mirrorH(YuvFrame& in);
+    static void mirrorH(YuvFrame& in);
 
-    static YuvFrame& mirrorV(YuvFrame& in);
+    static void mirrorV(YuvFrame& in);
 
-    static RgbFrame& toArgbFrame(YuvFrame& in);
+    static RgbFrame* toArgbFrame(YuvFrame& in);
 
-    static RgbFrame& toRgb565Frame(YuvFrame& in);
+    static RgbFrame* toRgb565Frame(YuvFrame& in);
 };
 
 
