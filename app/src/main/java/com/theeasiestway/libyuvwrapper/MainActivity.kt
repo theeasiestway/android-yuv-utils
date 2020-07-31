@@ -15,6 +15,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.theeasiestway.codec_h264.camera.ControllerVideo
 import com.theeasiestway.yuv.Constants
 import com.theeasiestway.yuv.YuvUtils
+import com.theeasiestway.yuv.entities.ArgbFrame
+import com.theeasiestway.yuv.entities.YuvFrame
 import java.nio.ByteBuffer
 
 //
@@ -160,6 +162,13 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         width = image.width
         height = image.height
+
+        val a = yuvUtils
+            .scale(1, 2, Constants.FILTER_BILINEAR)
+            .rotate(Constants.ROTATE_180)
+            .mirrorH()
+            .getArgb(image)
+
 
         if(needToUpdateWH) {
             runOnUiThread {

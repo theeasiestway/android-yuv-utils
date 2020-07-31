@@ -4,10 +4,10 @@ import android.media.Image
 import java.nio.ByteBuffer
 
 //
-// Created by Loboda Alexey on 22.06.2020.
+// Created by Loboda Alexey on 29.07.2020.
 //
 
-class YuvFrame {
+class YuvFrame: Frame() {
 
     lateinit var y: ByteBuffer; private set
     lateinit var u: ByteBuffer; private set
@@ -16,9 +16,6 @@ class YuvFrame {
     var yStride: Int = 0; private set
     var uStride: Int = 0; private set
     var vStride: Int = 0; private set
-
-    var width: Int = 0; private set
-    var height: Int = 0; private set
 
     fun fill(y: ByteBuffer, u: ByteBuffer, v: ByteBuffer, yStride: Int, uStride: Int, vStride: Int, width: Int, height: Int) {
         this.y = y
@@ -50,28 +47,6 @@ class YuvFrame {
         }
         width = image.width
         height = image.height
-    }
-
-    /** experimental method */
-    fun fill(width: Int, height: Int, data: ByteArray) {
-        this.width = width
-        this.height = height
-
-        val yArr = ByteArray(width * height)
-        val uArr = ByteArray(width * height / 4)
-        val vArr = ByteArray(width * height / 4)
-
-        System.arraycopy(data, 0, yArr, 0, yArr.size)
-        System.arraycopy(data, yArr.size, uArr, 0, uArr.size)
-        System.arraycopy(data, yArr.size + uArr.size, vArr, 0, uArr.size)
-
-        y = ByteBuffer.allocateDirect(yArr.size).put(yArr)
-        u = ByteBuffer.allocateDirect(uArr.size).put(uArr)
-        v = ByteBuffer.allocateDirect(vArr.size).put(vArr)
-
-        y.position(0)
-        u.position(0)
-        v.position(0)
     }
 
     fun asArray(): ByteArray {
@@ -114,4 +89,12 @@ class YuvFrame {
         width = 0
         height = 0
     }
+
+    fun getY() = getY(nativePointer)
+    fun getU() = getU(nativePointer)
+    fun getV() = getV(nativePointer)
+
+    private external fun getY(pointer: Int): ByteBuffer
+    private external fun getU(pointer: Int): ByteBuffer
+    private external fun getV(pointer: Int): ByteBuffer
 }

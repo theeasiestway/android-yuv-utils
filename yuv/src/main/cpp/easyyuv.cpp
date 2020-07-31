@@ -4,6 +4,11 @@
 #include <libyuv/scale.h>
 #include "libyuv.h"
 #include "utils/logger.h"
+#include "entities/rgbFrame.h"
+#include "entities/yuvFrame.h"
+#include "factories/FramesFactory.h"
+#include "factories/EntitiesFactory.h"
+#include "LibyuvWrapper.h"
 
 //
 // Created by Loboda Alexey on 22.06.2020.
@@ -123,6 +128,31 @@ Java_com_theeasiestway_yuv_YuvUtils_yuv420ToArgb(JNIEnv *env, jobject thiz, jobj
                        uNative, uStride,
                        outNative, outStride,
                        width, height);
+}
+
+//
+// YUV to RGB565
+//
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_YuvUtils_yuv420ToRgb565(JNIEnv *env, jobject thiz, jobject y, jobject u,
+                                                   jobject v, jint yStride, jint uStride, jint vStride,
+                                                   jobject out, jint outStride,
+                                                   jint width, jint height) {
+
+    uint8_t *yNative = (uint8_t *) env->GetDirectBufferAddress(y);
+    uint8_t *uNative = (uint8_t *) env->GetDirectBufferAddress(u);
+    uint8_t *vNative = (uint8_t *) env->GetDirectBufferAddress(v);
+
+    uint8_t *outNative = (uint8_t *) env->GetDirectBufferAddress(out);
+
+    libyuv::I420ToRGB565(yNative, yStride,
+                         vNative, vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
+                         uNative, uStride,
+                         outNative, outStride,
+                         width, height);
+
 
 }
 
@@ -154,4 +184,73 @@ Java_com_theeasiestway_yuv_YuvUtils_convertToI420(JNIEnv *env, jobject thiz, job
                              uOutNative, uOutStride,
                              vOutNative, vOutStride,
                              width, height);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
+                                                    jobject y, jobject u, jobject v,
+                                                    jint yStride, jint uStride, jint vStride, jint uvPixelStride,
+                                                    jint width, jint height,
+                                                    jint scaleWidth, jint scaleHeight, jint scaleFilter,
+                                                    jint rotationMode, jboolean mirrorH,
+                                                    jboolean mirrorV, jint returnType) {
+
+    //
+    // to I420
+    //
+
+    YuvFrame yuvFrame = LibyuvWrapper::to420((uint8_t *) env->GetDirectBufferAddress(y), yStride,
+                                              (uint8_t *) env->GetDirectBufferAddress(u), uStride,
+                                              (uint8_t *) env->GetDirectBufferAddress(v), vStride,
+                                              uvPixelStride, width, height);
+
+    //
+    // Scale
+    //
+
+    if (scaleWidth > 0 && scaleHeight > 0) yuvFrame = LibyuvWrapper::scale(yuvFrame, scaleWidth, scaleHeight, scaleFilter);
+
+    //
+    // Rotate
+    //
+
+    if (rotationMode > 0) yuvFrame = LibyuvWrapper::rotate(yuvFrame, rotationMode);
+
+    //
+    // MirrorH
+    //
+
+    if (mirrorH) yuvFrame = LibyuvWrapper::mirrorH(yuvFrame);
+
+    //
+    // MirrorV
+    //
+
+    if (mirrorV) yuvFrame = LibyuvWrapper::mirrorV(yuvFrame);
+
+    //
+    // to ARGB
+    //
+
+    if (returnType == LibyuvWrapper::RETURN_ARGB) {
+
+    }
 }

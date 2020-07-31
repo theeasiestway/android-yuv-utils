@@ -11,13 +11,18 @@ cmake_minimum_required(VERSION 3.4.1)
 # Gradle automatically packages shared libraries with your APK.
 
 add_library( # Sets the name of the library.
-             easyyuv
+        easyyuv
 
-             # Sets the library as a shared library.
-             SHARED
+        # Sets the library as a shared library.
+        SHARED
 
-             # Provides a relative path to your source file(s).
-             easyyuv.cpp )
+        # Provides a relative path to your source file(s).
+        factories/FramesFactory.cpp
+        factories/EntitiesFactory.cpp
+        LibyuvWrapper.cpp
+        entities/RgbFrame.cpp
+        entities/YuvFrame.cpp
+        easyyuv.cpp )
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
@@ -33,19 +38,19 @@ set_target_properties(yuv PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/lib
 # completing its build.
 
 find_library( # Sets the name of the path variable.
-              log-lib
+        log-lib
 
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
+        # Specifies the name of the NDK library that
+        # you want CMake to locate.
+        log )
 
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-                       easyyuv
-                       yuv
-                       # Links the target library to the log library
-                       # included in the NDK.
-                       ${log-lib} )
+        easyyuv
+        yuv
+        # Links the target library to the log library
+        # included in the NDK.
+        ${log-lib} )
