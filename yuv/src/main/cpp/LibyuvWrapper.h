@@ -12,10 +12,10 @@ class LibyuvWrapper {
 
 public:
 
-    static const int RETURN_YUV = 0;
-    static const int RETURN_I420 = 1;
-    static const int RETURN_ARGB = 2;
-    static const int RETURN_RGB565 = 3;
+    static const int YUV = 0;
+    static const int I420 = 1;
+    static const int ARGB = 2;
+    static const int RGB565 = 3;
 
     static YuvFrame* to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height);
 

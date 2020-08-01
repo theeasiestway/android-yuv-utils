@@ -1,6 +1,7 @@
 package com.theeasiestway.yuv.entities
 
 import android.media.Image
+import com.theeasiestway.yuv.Constants
 import java.nio.ByteBuffer
 
 //
@@ -89,6 +90,8 @@ class YuvFrame: Frame() {
         width = 0
         height = 0
     }
+
+    override fun getType(): Int = Constants.YUV
 
     fun getBytesY() = getY(nativePointer)
     fun getBytesU() = getU(nativePointer)

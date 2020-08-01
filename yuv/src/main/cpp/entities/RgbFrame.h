@@ -7,8 +7,9 @@
 
 #include <vector>
 #include <string>
+#include "Frame.h"
 
-class RgbFrame {
+class RgbFrame: public Frame {
 
 public:
 
@@ -19,9 +20,11 @@ public:
     int stride;
     std::vector<uint8_t> data;
 
-    RgbFrame* fromPointer(long ptr);
+    static RgbFrame* fromPointer(long ptr);
 
-    long getPointer(RgbFrame& rgbFrame);
+    long getPointer(RgbFrame &frame);
+
+    std::vector<uint8_t> getBytes() override;
 
     ~RgbFrame();
 };

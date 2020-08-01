@@ -7,6 +7,15 @@ package com.theeasiestway.yuv
 object Constants {
 
     //
+    // Frame Types
+    //
+
+    const val YUV = 0
+    const val I420 = 1
+    const val ARGB = 2
+    const val RGB565 = 3
+
+    //
     // Scale
     //
 

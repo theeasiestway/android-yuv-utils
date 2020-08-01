@@ -8,10 +8,6 @@ import com.theeasiestway.yuv.Constants
 
 class TransformParams {
 
-    val return_YUV = 0
-    val return_I420 = 1
-    val return_ARGB = 2
-    val return_RGB565 = 3
     var returnType = -1
 
     var scaleWidth = -1

@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
-        val a = yuvUtils
+        val argbFrame = yuvUtils
             .scale(1, 2, Constants.FILTER_BILINEAR)
             .rotate(Constants.ROTATE_180)
             .mirrorH()
@@ -182,15 +182,8 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         if (widthCurrent <= 0 || heightCurrent <= 0) return
 
-        var yuvFrame = yuvUtils.convertToI420(image)
-        yuvFrame = yuvUtils.scale(yuvFrame, widthCurrent, heightCurrent, Constants.FILTER_BOX)
-        yuvFrame = yuvUtils.rotate(yuvFrame, rotate)
-        if (mirrorH) yuvFrame = yuvUtils.mirrorH(yuvFrame)
-        if (mirrorV) yuvFrame = yuvUtils.mirrorV(yuvFrame)
-        val argbFrame = yuvUtils.yuv420ToArgb(yuvFrame)
-
         val bm = Bitmap.createBitmap(argbFrame.width, argbFrame.height, Bitmap.Config.ARGB_8888)
-        bm.copyPixelsFromBuffer(ByteBuffer.wrap(argbFrame.asArray())) // for displaying argb
+        bm.copyPixelsFromBuffer(argbFrame.getBytes()) // for displaying argb
 
         vImageView.post { vImageView.setImageBitmap(bm) }
     }

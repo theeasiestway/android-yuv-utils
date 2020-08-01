@@ -23,3 +23,7 @@ long RgbFrame::getPointer(RgbFrame &rgbFrame) {
 RgbFrame::~RgbFrame() {
     std::vector<uint8_t>().swap(data);
 }
+
+std::vector<uint8_t> RgbFrame::getBytes() {
+    return data;
+}

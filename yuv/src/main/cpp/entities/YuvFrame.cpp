@@ -36,12 +36,20 @@ YuvFrame* YuvFrame::fromPointer(long ptr) {
     return (YuvFrame *) ptr;
 }
 
-long YuvFrame::getPointer(YuvFrame &yuvFrame) {
-    return (long) &yuvFrame;
-}
-
 YuvFrame::~YuvFrame() {
     std::vector<uint8_t>().swap(y);
     std::vector<uint8_t>().swap(u);
     std::vector<uint8_t>().swap(v);
+}
+
+long YuvFrame::getPointer(YuvFrame &frame) {
+    return (long) &frame;
+}
+
+std::vector<uint8_t> YuvFrame::getBytes() {
+    std::vector<uint8_t> bytes;
+    bytes.insert(bytes.end(), y.begin(), y.end());
+    bytes.insert(bytes.end(), u.begin(), u.end());
+    bytes.insert(bytes.end(), v.begin(), v.end());
+    return bytes;
 }

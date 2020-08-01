@@ -6,15 +6,12 @@
 #define LIBYUVWRAPPER_YUVFRAME_H
 
 #include <vector>
+#include "Frame.h"
 
-class YuvFrame {
-
-private:
+class YuvFrame: public Frame {
 
 public:
 
-    int width;
-    int height;
     int yStride;
     int uStride;
     int vStride;
@@ -26,9 +23,11 @@ public:
 
     void update(YuvFrame& other);
 
-    long getPointer(YuvFrame& yuvFrame);
+    long getPointer(YuvFrame &frame);
 
-    YuvFrame* fromPointer(long ptr);
+    static YuvFrame* fromPointer(long ptr);
+
+    std::vector<uint8_t> getBytes() override;
 
     ~YuvFrame();
 };
