@@ -164,9 +164,9 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         height = image.height
 
         val argbFrame = yuvUtils
-            .scale(1, 2, Constants.FILTER_BILINEAR)
+            /*.scale(width * 2, height * 2, Constants.FILTER_BILINEAR)
             .rotate(Constants.ROTATE_180)
-            .mirrorH()
+            .mirrorH()*/
             .getArgb(image)
 
 

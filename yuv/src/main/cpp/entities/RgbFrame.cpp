@@ -9,7 +9,7 @@ RgbFrame::RgbFrame(int width, int height, int stride, int dataSize) {
     this->height = height;
     this->stride = stride;
     std::vector<uint8_t>().swap(data);
-    data.reserve(dataSize);
+    data.resize(dataSize);
 }
 
 RgbFrame* RgbFrame::fromPointer(long ptr) {

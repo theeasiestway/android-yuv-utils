@@ -8,10 +8,6 @@ import java.nio.ByteBuffer
 
 abstract class Frame() {
 
-    protected constructor(nativePointer: Long): this() {
-        this.nativePointer = nativePointer
-    }
-
     protected var nativePointer = -1L
     var width: Int = 0; protected set
     var height: Int = 0; protected set

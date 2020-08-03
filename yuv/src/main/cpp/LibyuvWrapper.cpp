@@ -5,6 +5,7 @@
 #include <libyuv.h>
 #include "LibyuvWrapper.h"
 #include "factories/FramesFactory.h"
+#include "utils/logger.h"
 
 YuvFrame* LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height) {
     YuvFrame *yuvFrame = instanceYuv(width, height);
@@ -88,8 +89,8 @@ RgbFrame* LibyuvWrapper::toArgbFrame(YuvFrame &in) {
     RgbFrame *temp = instanceArgb(in.width, in.height);
 
     libyuv::I420ToARGB(in.y.data(), in.yStride,
-                       in.u.data(), in.vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
-                       in.v.data(), in.uStride,
+                       in.v.data(), in.vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
+                       in.u.data(), in.uStride,
                        temp->data.data(), temp->stride,
                        in.width, in.height);
     delete &in;
@@ -100,8 +101,8 @@ RgbFrame* LibyuvWrapper::toRgb565Frame(YuvFrame &in) {
     RgbFrame *temp = instanceRgb565(in.width, in.height);
 
     libyuv::I420ToRGB565(in.y.data(), in.yStride,
-                         in.u.data(), in.vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
-                         in.v.data(), in.uStride,
+                         in.v.data(), in.vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
+                         in.u.data(), in.uStride,
                          temp->data.data(), temp->stride,
                          in.width, in.height);
 

@@ -13,9 +13,9 @@ YuvFrame::YuvFrame(int width, int height, int yStride, int uStride, int vStride,
     std::vector<uint8_t>().swap(y);
     std::vector<uint8_t>().swap(u);
     std::vector<uint8_t>().swap(v);
-    y.reserve(ySize);
-    u.reserve(uSize);
-    v.reserve(vSize);
+    y.resize(ySize);
+    u.resize(uSize);
+    v.resize(vSize);
 }
 
 void YuvFrame::update(YuvFrame& other) {
