@@ -47,9 +47,9 @@ long YuvFrame::getPointer(YuvFrame &frame) {
 }
 
 std::vector<uint8_t> YuvFrame::getBytes() {
-    std::vector<uint8_t> bytes;
-    bytes.insert(bytes.end(), y.begin(), y.end());
-    bytes.insert(bytes.end(), u.begin(), u.end());
-    bytes.insert(bytes.end(), v.begin(), v.end());
-    return bytes;
+    std::vector<uint8_t>().swap(allPlanes);
+    allPlanes.insert(allPlanes.end(), y.begin(), y.end());
+    allPlanes.insert(allPlanes.end(), u.begin(), u.end());
+    allPlanes.insert(allPlanes.end(), v.begin(), v.end());
+    return allPlanes;
 }

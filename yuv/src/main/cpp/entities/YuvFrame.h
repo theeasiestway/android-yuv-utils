@@ -27,8 +27,6 @@ public:
 
     static YuvFrame* fromPointer(long ptr);
 
-    std::vector<uint8_t> getBytes() override;
-
     ~YuvFrame();
 };
 

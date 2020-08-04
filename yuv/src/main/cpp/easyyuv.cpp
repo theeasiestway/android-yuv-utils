@@ -28,10 +28,33 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     // to I420
     //
 
-    YuvFrame *yuvFrame = LibyuvWrapper::to420((uint8_t *) env->GetDirectBufferAddress(y), yStride,
+    /*YuvFrame *yuvFrame = LibyuvWrapper::to420((uint8_t *) env->GetDirectBufferAddress(y), yStride,
                                               (uint8_t *) env->GetDirectBufferAddress(u), uStride,
                                               (uint8_t *) env->GetDirectBufferAddress(v), vStride,
-                                              uvPixelStride, width, height);
+                                              uvPixelStride, width, height);*/
+
+    uint8_t *yBuf = (uint8_t *) env->GetDirectBufferAddress(y);
+    uint8_t *uBuf = (uint8_t *) env->GetDirectBufferAddress(u);
+    uint8_t *vBuf = (uint8_t *) env->GetDirectBufferAddress(v);
+
+    int ySize = 307200;
+    int uSize = 76800;
+    int vSize = 76800;
+
+    YuvFrame *yuvFrame = instanceYuv(width, height);
+    yuvFrame->yStride = yStride;
+    yuvFrame->uStride = uStride;
+    yuvFrame->vStride = vStride;
+
+    std::vector<uint8_t>().swap(yuvFrame->y);
+    std::vector<uint8_t>().swap(yuvFrame->u);
+    std::vector<uint8_t>().swap(yuvFrame->v);
+
+    std::copy(&yBuf[0], &yBuf[ySize], back_inserter(yuvFrame->y));
+    std::copy(&uBuf[0], &uBuf[uSize], back_inserter(yuvFrame->u));
+    std::copy(&vBuf[0], &vBuf[vSize], back_inserter(yuvFrame->v));
+
+    return EntitiesFactory::instanceYuv(*yuvFrame, *env);
 
     //
     // Scale
@@ -102,10 +125,33 @@ Java_com_theeasiestway_yuv_entities_Frame_destroy(JNIEnv *env, jobject thiz, jlo
             break;
         }
     }
-}extern "C"
+}
+
+extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_Frame_getBytes(JNIEnv *env, jobject thiz, jlong pointer) {
     Frame *frame = (Frame*) pointer;
-    auto bytes = frame->getBytes();
-    return env->NewDirectByteBuffer(bytes.data(), bytes.size());
+   // LOGD("asdgdsgsd OUT OF CLASS", "[0]: %d; [100]: %d; [200]: %d; [500]: %d", bytes[0], bytes[100], bytes[200], bytes[500]);
+    return env->NewDirectByteBuffer()
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_theeasiestway_yuv_entities_YuvFrame_getY(JNIEnv *env, jobject thiz, jlong pointer) {
+    YuvFrame *frame = (YuvFrame*) pointer;
+    return env->NewDirectByteBuffer(frame->y.data(), frame->y.size());
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_theeasiestway_yuv_entities_YuvFrame_getU(JNIEnv *env, jobject thiz, jlong pointer) {
+    YuvFrame *frame = (YuvFrame*) pointer;
+    return env->NewDirectByteBuffer(frame->u.data(), frame->u.size());
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_theeasiestway_yuv_entities_YuvFrame_getV(JNIEnv *env, jobject thiz, jlong pointer) {
+    YuvFrame *frame = (YuvFrame*) pointer;
+    return env->NewDirectByteBuffer(frame->v.data(), frame->v.size());
 }

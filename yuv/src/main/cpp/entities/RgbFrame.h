@@ -18,13 +18,10 @@ public:
     int width;
     int height;
     int stride;
-    std::vector<uint8_t> data;
 
     static RgbFrame* fromPointer(long ptr);
 
     long getPointer(RgbFrame &frame);
-
-    std::vector<uint8_t> getBytes() override;
 
     ~RgbFrame();
 };

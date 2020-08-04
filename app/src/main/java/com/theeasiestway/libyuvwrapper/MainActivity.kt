@@ -2,10 +2,11 @@ package com.theeasiestway.libyuvwrapper
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
+import android.graphics.*
 import android.media.Image
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,9 @@ import com.theeasiestway.yuv.Constants
 import com.theeasiestway.yuv.YuvUtils
 import com.theeasiestway.yuv.entities.ArgbFrame
 import com.theeasiestway.yuv.entities.YuvFrame
+import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 //
 // Created by Loboda Alexey on 22.06.2020.
@@ -163,12 +166,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
-        val argbFrame = yuvUtils
+        val yuvFrame = yuvUtils
             /*.scale(width * 2, height * 2, Constants.FILTER_BILINEAR)
             .rotate(Constants.ROTATE_180)
             .mirrorH()*/
-            .getArgb(image)
-
+            .getYUV(image)
 
         if(needToUpdateWH) {
             runOnUiThread {
@@ -180,11 +182,24 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             }
         }
 
-        if (widthCurrent <= 0 || heightCurrent <= 0) return
+        val bytes = yuvFrame.getBytes()
+        val array = ByteArray(bytes.remaining())
+        bytes.get(array)
+        Log.d("asdgdsgsd", "KOTLIN [0]: ${bytes.get(0)}; [100]: ${bytes.get(100)}; [200]: ${bytes.get(200)}; [500]: ${bytes.get(500)}")
+
+        val yuvImage = YuvImage(array, ImageFormat.NV21, 640, 480, null)
+
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, 640, 480), 50, out)
+        val imageBytes: ByteArray = out.toByteArray()
+        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        vImageView.post { vImageView.setImageBitmap(bm) }
+
+        /*if (widthCurrent <= 0 || heightCurrent <= 0) return
 
         val bm = Bitmap.createBitmap(argbFrame.width, argbFrame.height, Bitmap.Config.ARGB_8888)
         bm.copyPixelsFromBuffer(argbFrame.getBytes()) // for displaying argb
 
-        vImageView.post { vImageView.setImageBitmap(bm) }
+        vImageView.post { vImageView.setImageBitmap(bm) }*/
     }
 }

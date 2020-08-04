@@ -14,11 +14,14 @@ class Frame {
 public:
     int width;
     int height;
+    std::vector<uint8_t> data;
 
-    template <class T>
+   template <class T>
     long getPointer(T t) { return 0; }
 
-    virtual std::vector<uint8_t> getBytes() = 0;
+    ~Frame() {
+        std::vector<uint8_t>().swap(data);
+    }
 };
 
 
