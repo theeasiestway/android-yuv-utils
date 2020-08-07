@@ -21,35 +21,35 @@ YuvFrame::YuvFrame(int width, int height, int yStride, int uStride, int vStride,
 void YuvFrame::update(YuvFrame& other) {
     width = other.width;
     height = other.height;
+
     yStride = other.yStride;
     uStride = other.uStride;
     vStride = other.vStride;
+
     std::vector<uint8_t>().swap(y);
     std::vector<uint8_t>().swap(u);
     std::vector<uint8_t>().swap(v);
     y = std::move(other.y);
     u = std::move(other.u);
     v = std::move(other.v);
-}
 
-YuvFrame* YuvFrame::fromPointer(long ptr) {
-    return (YuvFrame *) ptr;
+    std::vector<uint8_t>().swap(data);
+    data.insert(data.end(), y.begin(), y.end());
+    data.insert(data.end(), u.begin(), u.end());
+    data.insert(data.end(), v.begin(), v.end());
 }
 
 YuvFrame::~YuvFrame() {
+    std::vector<uint8_t>().swap(data);
     std::vector<uint8_t>().swap(y);
     std::vector<uint8_t>().swap(u);
     std::vector<uint8_t>().swap(v);
 }
 
-long YuvFrame::getPointer(YuvFrame &frame) {
-    return (long) &frame;
-}
-
-std::vector<uint8_t> YuvFrame::getBytes() {
-    std::vector<uint8_t>().swap(allPlanes);
-    allPlanes.insert(allPlanes.end(), y.begin(), y.end());
-    allPlanes.insert(allPlanes.end(), u.begin(), u.end());
-    allPlanes.insert(allPlanes.end(), v.begin(), v.end());
-    return allPlanes;
+std::pair<uint8_t*, int> YuvFrame::getBytes() {
+    std::vector<uint8_t>().swap(data);
+    data.insert(data.end(), y.begin(), y.end());
+    data.insert(data.end(), u.begin(), u.end());
+    data.insert(data.end(), v.begin(), v.end());
+    return std::make_pair(data.data(), data.size());
 }

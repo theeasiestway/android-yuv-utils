@@ -12,12 +12,4 @@ RgbFrame::RgbFrame(int width, int height, int stride, int dataSize) {
     data.resize(dataSize);
 }
 
-RgbFrame* RgbFrame::fromPointer(long ptr) {
-    return (RgbFrame*) ptr;
-}
-
-long RgbFrame::getPointer(RgbFrame &rgbFrame) {
-    return (long) &rgbFrame;
-}
-
 RgbFrame::~RgbFrame() { /* nothing to do yet */ }

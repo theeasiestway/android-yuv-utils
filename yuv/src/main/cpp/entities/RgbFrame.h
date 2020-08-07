@@ -19,10 +19,6 @@ public:
     int height;
     int stride;
 
-    static RgbFrame* fromPointer(long ptr);
-
-    long getPointer(RgbFrame &frame);
-
     ~RgbFrame();
 };
 

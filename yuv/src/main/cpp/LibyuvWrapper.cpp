@@ -41,7 +41,7 @@ void LibyuvWrapper::scale(YuvFrame& in, int scaleWidth, int scaleHeight, int sca
 }
 
 void LibyuvWrapper::rotate(YuvFrame &in, int rotationMode) {
-    if (rotationMode > 0) {
+    if (rotationMode >= 0) {
         YuvFrame *temp = instanceYuv(in.width, in.height, rotationMode);
         libyuv::I420Rotate(in.y.data(), in.yStride,
                            in.u.data(), in.uStride,
@@ -101,8 +101,8 @@ RgbFrame* LibyuvWrapper::toRgb565Frame(YuvFrame &in) {
     RgbFrame *temp = instanceRgb565(in.width, in.height);
 
     libyuv::I420ToRGB565(in.y.data(), in.yStride,
-                         in.v.data(), in.vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
                          in.u.data(), in.uStride,
+                         in.v.data(), in.vStride,
                          temp->data.data(), temp->stride,
                          in.width, in.height);
 

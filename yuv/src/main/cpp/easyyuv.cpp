@@ -28,33 +28,10 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     // to I420
     //
 
-    /*YuvFrame *yuvFrame = LibyuvWrapper::to420((uint8_t *) env->GetDirectBufferAddress(y), yStride,
+    YuvFrame *yuvFrame = LibyuvWrapper::to420((uint8_t *) env->GetDirectBufferAddress(y), yStride,
                                               (uint8_t *) env->GetDirectBufferAddress(u), uStride,
                                               (uint8_t *) env->GetDirectBufferAddress(v), vStride,
-                                              uvPixelStride, width, height);*/
-
-    uint8_t *yBuf = (uint8_t *) env->GetDirectBufferAddress(y);
-    uint8_t *uBuf = (uint8_t *) env->GetDirectBufferAddress(u);
-    uint8_t *vBuf = (uint8_t *) env->GetDirectBufferAddress(v);
-
-    int ySize = 307200;
-    int uSize = 76800;
-    int vSize = 76800;
-
-    YuvFrame *yuvFrame = instanceYuv(width, height);
-    yuvFrame->yStride = yStride;
-    yuvFrame->uStride = uStride;
-    yuvFrame->vStride = vStride;
-
-    std::vector<uint8_t>().swap(yuvFrame->y);
-    std::vector<uint8_t>().swap(yuvFrame->u);
-    std::vector<uint8_t>().swap(yuvFrame->v);
-
-    std::copy(&yBuf[0], &yBuf[ySize], back_inserter(yuvFrame->y));
-    std::copy(&uBuf[0], &uBuf[uSize], back_inserter(yuvFrame->u));
-    std::copy(&vBuf[0], &vBuf[vSize], back_inserter(yuvFrame->v));
-
-    return EntitiesFactory::instanceYuv(*yuvFrame, *env);
+                                              uvPixelStride, width, height);
 
     //
     // Scale
@@ -66,7 +43,7 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     // Rotate
     //
 
-    if (rotationMode > 0) LibyuvWrapper::rotate(*yuvFrame, rotationMode);
+    if (rotationMode >= 0) LibyuvWrapper::rotate(*yuvFrame, rotationMode);
 
     //
     // MirrorH
@@ -94,7 +71,7 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     //
 
     if (returnType == LibyuvWrapper::RGB565) {
-        RgbFrame *rgbFrame = LibyuvWrapper::toArgbFrame(*yuvFrame);
+        RgbFrame *rgbFrame = LibyuvWrapper::toRgb565Frame(*yuvFrame);
         return EntitiesFactory::instanceRgb565(*rgbFrame, *env);
     }
 
@@ -106,20 +83,20 @@ JNIEXPORT void JNICALL
 Java_com_theeasiestway_yuv_entities_Frame_destroy(JNIEnv *env, jobject thiz, jlong pointer, jint classType) {
     switch (classType) {
         case LibyuvWrapper::ARGB: {
-            RgbFrame *argbFrame = RgbFrame::fromPointer((long) pointer);
+            RgbFrame *argbFrame = (RgbFrame*)((long) pointer);
             delete argbFrame;
             argbFrame = nullptr;
             break;
         }
         case LibyuvWrapper::RGB565: {
-            RgbFrame *rgb565Frame = RgbFrame::fromPointer((long) pointer);
+            RgbFrame *rgb565Frame = (RgbFrame*)((long) pointer);
             delete rgb565Frame;
             rgb565Frame = nullptr;
             break;
         }
         case LibyuvWrapper::YUV: {
             default:
-                YuvFrame *yuvFrame = YuvFrame::fromPointer((long) pointer);
+                YuvFrame *yuvFrame = (YuvFrame*)((long) pointer);
             delete yuvFrame;
             yuvFrame = nullptr;
             break;
@@ -131,8 +108,8 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_Frame_getBytes(JNIEnv *env, jobject thiz, jlong pointer) {
     Frame *frame = (Frame*) pointer;
-   // LOGD("asdgdsgsd OUT OF CLASS", "[0]: %d; [100]: %d; [200]: %d; [500]: %d", bytes[0], bytes[100], bytes[200], bytes[500]);
-    return env->NewDirectByteBuffer()
+    auto bytes = frame->getBytes();
+    return env->NewDirectByteBuffer(bytes.first, bytes.second);
 }
 
 extern "C"

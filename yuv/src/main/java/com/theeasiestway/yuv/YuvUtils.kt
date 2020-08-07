@@ -48,13 +48,13 @@ class YuvUtils {
     // Mirror
     //
 
-    fun mirrorH(): YuvUtils {
-        transformParams.mirrorH = true
+    fun mirrorH(b: Boolean): YuvUtils {
+        transformParams.mirrorH = b
         return this
     }
 
-    fun mirrorV(): YuvUtils {
-        transformParams.mirrorV = true
+    fun mirrorV(b: Boolean): YuvUtils {
+        transformParams.mirrorV = b
         return this
     }
 

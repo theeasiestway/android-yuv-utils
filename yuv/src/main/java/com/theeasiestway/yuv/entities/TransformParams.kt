@@ -14,7 +14,7 @@ class TransformParams {
     var scaleHeight = -1
     var scaleFilter = Constants.FILTER_NONE
 
-    var rotationMode = Constants.ROTATE_0
+    var rotationMode = -1
 
     var mirrorH = false
     var mirrorV = false
@@ -26,7 +26,7 @@ class TransformParams {
         scaleHeight = -1
         scaleFilter = Constants.FILTER_NONE
 
-        rotationMode = Constants.ROTATE_0
+        rotationMode = -1
 
         mirrorH = false
         mirrorV = false

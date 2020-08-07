@@ -23,9 +23,7 @@ public:
 
     void update(YuvFrame& other);
 
-    long getPointer(YuvFrame &frame);
-
-    static YuvFrame* fromPointer(long ptr);
+    std::pair<uint8_t*, int> getBytes() override;
 
     ~YuvFrame();
 };

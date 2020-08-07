@@ -20,7 +20,7 @@ YuvFrame* instanceYuv(int width, int height, int rotation) {
     int ySize = outWidth * outHeight;
     int uvSize = outWidth * outHeight / 4;
     int extra = width % 2 == 0 ? 0 : 1;
-    return new YuvFrame(width, height, width, width / 2 + extra, width / 2 + extra, ySize, uvSize, uvSize);
+    return new YuvFrame(outWidth, outHeight, outWidth, outWidth / 2 + extra, outWidth / 2 + extra, ySize, uvSize, uvSize);
 }
 
 RgbFrame* instanceArgb(int width, int height) {

@@ -16,8 +16,13 @@ public:
     int height;
     std::vector<uint8_t> data;
 
-   template <class T>
-    long getPointer(T t) { return 0; }
+    long getPointer(Frame &frame) {
+        return (long) &frame;
+    }
+
+    virtual std::pair<uint8_t*, int> getBytes() {
+        return std::make_pair(data.data(), data.size());
+    }
 
     ~Frame() {
         std::vector<uint8_t>().swap(data);
