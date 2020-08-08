@@ -9,6 +9,7 @@
 #include "factories/FramesFactory.h"
 #include "factories/EntitiesFactory.h"
 #include "LibyuvWrapper.h"
+#include "utils/TimeCounter.h"
 
 //
 // Created by Loboda Alexey on 22.06.2020.
@@ -27,6 +28,8 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     //
     // to I420
     //
+
+    TimeCounter::printTime("return I420");
 
     YuvFrame *yuvFrame = LibyuvWrapper::to420((uint8_t *) env->GetDirectBufferAddress(y), yStride,
                                               (uint8_t *) env->GetDirectBufferAddress(u), uStride,
@@ -75,6 +78,10 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
         return EntitiesFactory::instanceRgb565(*rgbFrame, *env);
     }
 
+    TimeCounter::setTime();
+
+    yuvFrame->fillData(); //TODO it's necessary to do this inside yuvFrame class.
+
     return EntitiesFactory::instanceYuv(*yuvFrame, *env);
 }
 
@@ -95,11 +102,12 @@ Java_com_theeasiestway_yuv_entities_Frame_destroy(JNIEnv *env, jobject thiz, jlo
             break;
         }
         case LibyuvWrapper::YUV: {
-            default:
-                YuvFrame *yuvFrame = (YuvFrame*)((long) pointer);
-            delete yuvFrame;
-            yuvFrame = nullptr;
-            break;
+            default: {
+                YuvFrame *yuvFrame = (YuvFrame *) ((long) pointer);
+                delete yuvFrame;
+                yuvFrame = nullptr;
+                break;
+            }
         }
     }
 }
@@ -108,27 +116,26 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_Frame_getBytes(JNIEnv *env, jobject thiz, jlong pointer) {
     Frame *frame = (Frame*) pointer;
-    auto bytes = frame->getBytes();
-    return env->NewDirectByteBuffer(bytes.first, bytes.second);
+    return env->NewDirectByteBuffer(frame->data, frame->dataSize);
 }
 
 extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getY(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = (YuvFrame*) pointer;
-    return env->NewDirectByteBuffer(frame->y.data(), frame->y.size());
+    return env->NewDirectByteBuffer(frame->y, frame->ySize);
 }
 
 extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getU(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = (YuvFrame*) pointer;
-    return env->NewDirectByteBuffer(frame->u.data(), frame->u.size());
+    return env->NewDirectByteBuffer(frame->u, frame->uSize);
 }
 
 extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getV(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = (YuvFrame*) pointer;
-    return env->NewDirectByteBuffer(frame->v.data(), frame->v.size());
+    return env->NewDirectByteBuffer(frame->v, frame->vSize);
 }

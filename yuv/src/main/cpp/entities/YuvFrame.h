@@ -15,15 +15,18 @@ public:
     int yStride;
     int uStride;
     int vStride;
-    std::vector<uint8_t> y;
-    std::vector<uint8_t> u;
-    std::vector<uint8_t> v;
+    uint8_t* y = nullptr;
+    int ySize;
+    uint8_t* u = nullptr;
+    int uSize;
+    uint8_t* v = nullptr;
+    int vSize;
 
     YuvFrame(int width, int height, int yStride, int uStride, int vStride, int ySize, int uSize, int vSize);
 
-    void update(YuvFrame& other);
+    void fillData();
 
-    std::pair<uint8_t*, int> getBytes() override;
+    void update(YuvFrame& other);
 
     ~YuvFrame();
 };

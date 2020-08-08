@@ -14,18 +14,16 @@ class Frame {
 public:
     int width;
     int height;
-    std::vector<uint8_t> data;
+    uint8_t* data = nullptr;
+    int dataSize;
 
     long getPointer(Frame &frame) {
         return (long) &frame;
     }
 
-    virtual std::pair<uint8_t*, int> getBytes() {
-        return std::make_pair(data.data(), data.size());
-    }
-
     ~Frame() {
-        std::vector<uint8_t>().swap(data);
+        if (data) free(data);
+        data = nullptr;
     }
 };
 

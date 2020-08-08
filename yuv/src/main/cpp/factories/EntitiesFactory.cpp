@@ -4,6 +4,8 @@
 
 #include "EntitiesFactory.h"
 
+//TODO it's necessary to add caching of jclasses and also may jFieldIDs
+
 jobject EntitiesFactory::instanceYuv(YuvFrame &frame, JNIEnv &env) {
     jclass clazz = env.FindClass("com/theeasiestway/yuv/entities/YuvFrame");
     jmethodID ctor = env.GetMethodID(clazz, "<init>", "()V");

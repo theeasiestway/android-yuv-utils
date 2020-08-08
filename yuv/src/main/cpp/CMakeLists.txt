@@ -17,6 +17,7 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
+        utils/TimeCounter.cpp
         factories/FramesFactory.cpp
         factories/EntitiesFactory.cpp
         LibyuvWrapper.cpp

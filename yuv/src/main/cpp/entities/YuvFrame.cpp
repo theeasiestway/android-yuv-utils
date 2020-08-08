@@ -3,6 +3,7 @@
 //
 
 #include "YuvFrame.h"
+#include "../utils/TimeCounter.h"
 
 YuvFrame::YuvFrame(int width, int height, int yStride, int uStride, int vStride, int ySize, int uSize, int vSize) {
     this->width = width;
@@ -10,12 +11,14 @@ YuvFrame::YuvFrame(int width, int height, int yStride, int uStride, int vStride,
     this->yStride = yStride;
     this->uStride = uStride;
     this->vStride = vStride;
-    std::vector<uint8_t>().swap(y);
-    std::vector<uint8_t>().swap(u);
-    std::vector<uint8_t>().swap(v);
-    y.resize(ySize);
-    u.resize(uSize);
-    v.resize(vSize);
+    this->ySize = ySize;
+    this->uSize = uSize;
+    this->vSize = vSize;
+    dataSize = ySize + uSize + vSize;
+
+    y = (uint8_t*) malloc(sizeof(uint8_t) * ySize);
+    u = (uint8_t*) malloc(sizeof(uint8_t) * uSize);
+    v = (uint8_t*) malloc(sizeof(uint8_t) * vSize);
 }
 
 void YuvFrame::update(YuvFrame& other) {
@@ -26,30 +29,45 @@ void YuvFrame::update(YuvFrame& other) {
     uStride = other.uStride;
     vStride = other.vStride;
 
-    std::vector<uint8_t>().swap(y);
-    std::vector<uint8_t>().swap(u);
-    std::vector<uint8_t>().swap(v);
-    y = std::move(other.y);
-    u = std::move(other.u);
-    v = std::move(other.v);
+    ySize = other.ySize;
+    uSize = other.uSize;
+    vSize = other.vSize;
+    dataSize = other.dataSize;
 
-    std::vector<uint8_t>().swap(data);
-    data.insert(data.end(), y.begin(), y.end());
-    data.insert(data.end(), u.begin(), u.end());
-    data.insert(data.end(), v.begin(), v.end());
+    TimeCounter::setTime();
+
+    if (y) free(y);
+    if (u) free(u);
+    if (v) free(v);
+    if (data) free(data);
+
+    y = (uint8_t*) malloc(sizeof(uint8_t) * ySize);
+    u = (uint8_t*) malloc(sizeof(uint8_t) * uSize);
+    v = (uint8_t*) malloc(sizeof(uint8_t) * vSize);
+
+    data = (uint8_t*) malloc(sizeof(uint8_t) * dataSize);
+
+    memmove(&y[0], &other.y[0], sizeof(uint8_t) * ySize);
+    memmove(&u[0], &other.u[0], sizeof(uint8_t) * uSize);
+    memmove(&v[0], &other.v[0], sizeof(uint8_t) * vSize);
+
+    memmove(&data[0], &y[0], sizeof(uint8_t) * ySize);
+    memmove(&data[ySize], &u[0], sizeof(uint8_t) * uSize);
+    memmove(&data[ySize + uSize], &v[0], sizeof(uint8_t) * vSize);
+}
+
+void YuvFrame::fillData() {
+    data = (uint8_t*) malloc(sizeof(uint8_t) * dataSize);
+    memmove(&data[0], &y[0], sizeof(uint8_t) * ySize);
+    memmove(&data[ySize], &u[0], sizeof(uint8_t) * uSize);
+    memmove(&data[ySize + uSize], &v[0], sizeof(uint8_t) * vSize);
 }
 
 YuvFrame::~YuvFrame() {
-    std::vector<uint8_t>().swap(data);
-    std::vector<uint8_t>().swap(y);
-    std::vector<uint8_t>().swap(u);
-    std::vector<uint8_t>().swap(v);
-}
-
-std::pair<uint8_t*, int> YuvFrame::getBytes() {
-    std::vector<uint8_t>().swap(data);
-    data.insert(data.end(), y.begin(), y.end());
-    data.insert(data.end(), u.begin(), u.end());
-    data.insert(data.end(), v.begin(), v.end());
-    return std::make_pair(data.data(), data.size());
+    if (y) free(y);
+    if (u) free(u);
+    if (v) free(v);
+    y = nullptr;
+    u = nullptr;
+    v = nullptr;
 }
