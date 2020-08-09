@@ -16,6 +16,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.theeasiestway.codec_h264.camera.ControllerVideo
 import com.theeasiestway.yuv.Constants
 import com.theeasiestway.yuv.YuvUtils
+import com.theeasiestway.yuv.entities.YuvFrame
 import java.io.ByteArrayOutputStream
 
 //
@@ -165,11 +166,13 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         height = image.height
 
         yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
-    //    yuvUtils.rotate(rotate)
-    //    yuvUtils.mirrorH(mirrorH)
-    //    yuvUtils.mirrorV(mirrorV)
+        yuvUtils.rotate(rotate)
+        yuvUtils.mirrorH(mirrorH)
+        yuvUtils.mirrorV(mirrorV)
 
-        val frame = yuvUtils.getYUV(image)
+    //    val frame = yuvUtils.getYUV(image)
+        val frame = yuvUtils.getRgb565(image)
+    //    val frame = yuvUtils.getArgb(image)
 
         // before optimisation get frame time was: 108.0 ms.
 
@@ -195,19 +198,19 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     //    Log.d("asdgdsgsd", "KOTLIN [0]: ${bytes.get(0)}; [100]: ${bytes.get(100)}; [200]: ${bytes.get(200)}; [500]: ${bytes.get(500)}")
 
 
-        val yuvImage = YuvImage(array, ImageFormat.NV21, 640, 480, null)
+/*        val yuvImage = YuvImage(array, ImageFormat.NV21, 640, 480, null)
 
         val out = ByteArrayOutputStream()
         yuvImage.compressToJpeg(Rect(0, 0, 640, 480), 50, out)
         val imageBytes: ByteArray = out.toByteArray()
-        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)*/
 
 
 
-/*        if (widthCurrent <= 0 || heightCurrent <= 0) return
+        if (widthCurrent <= 0 || heightCurrent <= 0) return
 
-        val bm = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.ARGB_8888)
-        bm.copyPixelsFromBuffer(frame.getBytes()) // for displaying argb*/
+        val bm = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.RGB_565)
+        bm.copyPixelsFromBuffer(frame.getBytes()) // for displaying argb
 
         vImageView.post { vImageView.setImageBitmap(bm) }
 

@@ -12,7 +12,6 @@
 class RgbFrame: public Frame {
 
 public:
-
     RgbFrame(int width, int height, int stride, int dataSize);
 
     int width;
@@ -21,6 +20,5 @@ public:
 
     ~RgbFrame();
 };
-
 
 #endif //LIBYUVWRAPPER_RGBFRAME_H

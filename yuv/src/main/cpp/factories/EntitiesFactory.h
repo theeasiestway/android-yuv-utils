@@ -12,6 +12,7 @@
 class EntitiesFactory {
 
 public:
+    static void init(JNIEnv &env);
     static jobject instanceYuv(YuvFrame &frame, JNIEnv &env);
     static jobject instanceArgb(RgbFrame &frame, JNIEnv &env);
     static jobject instanceRgb565(RgbFrame &frame, JNIEnv &env);

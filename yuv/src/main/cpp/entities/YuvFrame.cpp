@@ -36,24 +36,17 @@ void YuvFrame::update(YuvFrame& other) {
 
     TimeCounter::setTime();
 
-    if (y) free(y);
-    if (u) free(u);
-    if (v) free(v);
-    if (data) free(data);
+    release();
 
     y = (uint8_t*) malloc(sizeof(uint8_t) * ySize);
     u = (uint8_t*) malloc(sizeof(uint8_t) * uSize);
     v = (uint8_t*) malloc(sizeof(uint8_t) * vSize);
 
-    data = (uint8_t*) malloc(sizeof(uint8_t) * dataSize);
-
     memmove(&y[0], &other.y[0], sizeof(uint8_t) * ySize);
     memmove(&u[0], &other.u[0], sizeof(uint8_t) * uSize);
     memmove(&v[0], &other.v[0], sizeof(uint8_t) * vSize);
 
-    memmove(&data[0], &y[0], sizeof(uint8_t) * ySize);
-    memmove(&data[ySize], &u[0], sizeof(uint8_t) * uSize);
-    memmove(&data[ySize + uSize], &v[0], sizeof(uint8_t) * vSize);
+    fillData();
 }
 
 void YuvFrame::fillData() {
@@ -64,6 +57,11 @@ void YuvFrame::fillData() {
 }
 
 YuvFrame::~YuvFrame() {
+    release();
+}
+
+void YuvFrame::release() {
+    Frame::release();
     if (y) free(y);
     if (u) free(u);
     if (v) free(v);

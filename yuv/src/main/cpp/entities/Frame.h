@@ -11,6 +11,12 @@
 
 class Frame {
 
+protected:
+    virtual void release() {
+        if (data) free(data);
+        data = nullptr;
+    }
+
 public:
     int width;
     int height;
@@ -22,10 +28,8 @@ public:
     }
 
     ~Frame() {
-        if (data) free(data);
-        data = nullptr;
+        release();
     }
 };
-
 
 #endif //LIBYUVWRAPPER_FRAME_H

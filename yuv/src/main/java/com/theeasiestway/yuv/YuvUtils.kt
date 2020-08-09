@@ -17,9 +17,14 @@ class YuvUtils {
         val transformParams = TransformParams()
 
         init {
-            try { System.loadLibrary("easyyuv") }
+            try {
+                System.loadLibrary("easyyuv")
+                nativeInit()
+            }
             catch (e: Exception) { Log.e(TAG, "Couldn't load easyyuv library: $e") }
         }
+
+        private external fun nativeInit()
     }
 
     //

@@ -138,4 +138,8 @@ JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getV(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = (YuvFrame*) pointer;
     return env->NewDirectByteBuffer(frame->v, frame->vSize);
+}extern "C"
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_YuvUtils_00024Companion_nativeInit(JNIEnv *env, jobject thiz) {
+    EntitiesFactory::init(*env);
 }

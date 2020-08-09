@@ -10,8 +10,10 @@
 
 class YuvFrame: public Frame {
 
-public:
+protected:
+    void release() override;
 
+public:
     int yStride;
     int uStride;
     int vStride;
@@ -28,8 +30,8 @@ public:
 
     void update(YuvFrame& other);
 
+public:
     ~YuvFrame();
 };
-
 
 #endif //LIBYUVWRAPPER_YUVFRAME_H
