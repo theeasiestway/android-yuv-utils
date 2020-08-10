@@ -14,6 +14,8 @@ object Constants {
     const val I420 = 1
     const val ARGB = 2
     const val RGB565 = 3
+    const val BITMAP_ARGB = 4
+    const val BITMAP_RGB565 = 5
 
     //
     // Scale

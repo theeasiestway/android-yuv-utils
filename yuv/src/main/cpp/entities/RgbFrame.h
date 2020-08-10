@@ -12,8 +12,9 @@
 class RgbFrame: public Frame {
 
 public:
-    RgbFrame(int width, int height, int stride, int dataSize);
+    RgbFrame(int width, int height, int stride, int dataSize, int type);
 
+    int type;
     int width;
     int height;
     int stride;

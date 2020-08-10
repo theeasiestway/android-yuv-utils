@@ -1,5 +1,6 @@
 package com.theeasiestway.yuv
 
+import android.graphics.Bitmap
 import android.media.Image
 import android.util.Log
 import com.theeasiestway.yuv.entities.*
@@ -96,6 +97,16 @@ class YuvUtils {
         return transform(from, uvPixelStride) as ArgbFrame
     }
 
+    fun getBitmapArgb(from: Image): Bitmap {
+        transformParams.returnType = Constants.BITMAP_ARGB
+        return transform(from) as Bitmap
+    }
+
+    fun getBitmapArgb(from: YuvFrame, uvPixelStride: Int): Bitmap {
+        transformParams.returnType = Constants.BITMAP_ARGB
+        return transform(from, uvPixelStride) as Bitmap
+    }
+
     //
     // Convert RGB565
     //
@@ -110,11 +121,21 @@ class YuvUtils {
         return transform(from, uvPixelStride) as Rgb565Frame
     }
 
+    fun getBitmapRgb565(from: Image): Bitmap {
+        transformParams.returnType = Constants.BITMAP_RGB565
+        return transform(from) as Bitmap
+    }
+
+    fun getBitmapRgb565(from: YuvFrame, uvPixelStride: Int): Bitmap {
+        transformParams.returnType = Constants.BITMAP_RGB565
+        return transform(from, uvPixelStride) as Bitmap
+    }
+
     //
     // Support
     //
 
-    private fun transform(image: Image): Frame {
+    private fun transform(image: Image): Any {
         return transformNative(image.planes[0].buffer,
             image.planes[1].buffer,
             image.planes[2].buffer,
@@ -133,7 +154,7 @@ class YuvUtils {
             transformParams.returnType)
     }
 
-    private fun transform(yuvFrame: YuvFrame, uvPixelStride: Int): Frame {
+    private fun transform(yuvFrame: YuvFrame, uvPixelStride: Int): Any {
         return transformNative(yuvFrame.y,
             yuvFrame.u,
             yuvFrame.v,
@@ -167,5 +188,5 @@ class YuvUtils {
                                          rotationMode: Int,
                                          mirrorH: Boolean,
                                          mirrorV: Boolean,
-                                         returnType: Int): Frame
+                                         returnType: Int): Any
 }

@@ -70,12 +70,30 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     }
 
     //
+    // to Bitmap ARGB
+    //
+
+    if (returnType == LibyuvWrapper::BITMAP_ARGB) {
+        RgbFrame *rgbFrame = LibyuvWrapper::toArgbFrame(*yuvFrame);
+        return EntitiesFactory::instanceBitmapArgb(*rgbFrame, *env);
+    }
+
+    //
     // to RGB565
     //
 
     if (returnType == LibyuvWrapper::RGB565) {
         RgbFrame *rgbFrame = LibyuvWrapper::toRgb565Frame(*yuvFrame);
         return EntitiesFactory::instanceRgb565(*rgbFrame, *env);
+    }
+
+    //
+    // to Bitmap RGB565
+    //
+
+    if (returnType == LibyuvWrapper::BITMAP_RGB565) {
+        RgbFrame *rgbFrame = LibyuvWrapper::toRgb565Frame(*yuvFrame);
+        return EntitiesFactory::instanceBitmapRgb565(*rgbFrame, *env);
     }
 
     TimeCounter::setTime();

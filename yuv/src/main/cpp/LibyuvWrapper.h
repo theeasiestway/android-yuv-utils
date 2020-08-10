@@ -16,6 +16,8 @@ public:
     static const int I420 = 1;
     static const int ARGB = 2;
     static const int RGB565 = 3;
+    static const int BITMAP_ARGB = 4;
+    static const int BITMAP_RGB565 = 5;
 
     static YuvFrame* to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height);
 

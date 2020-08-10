@@ -6,6 +6,7 @@
 #include "FramesFactory.h"
 #include "../entities/YuvFrame.h"
 #include "../entities/RgbFrame.h"
+#include "../LibyuvWrapper.h"
 
 YuvFrame* instanceYuv(int width, int height) {
     int ySize = width * height;
@@ -27,12 +28,12 @@ RgbFrame* instanceArgb(int width, int height) {
     int dataSize = (width * height) * 32;
     int extra = width % 2 == 0 ? 0 : 1;
     int stride = width * 4 + extra;
-    return new RgbFrame(width, height, stride, dataSize);
+    return new RgbFrame(width, height, stride, dataSize, LibyuvWrapper::ARGB);
 }
 
 RgbFrame* instanceRgb565(int width, int height) {
     int dataSize = (width * height) * 16;
     int extra = width % 2 == 0 ? 0 : 1;
     int stride = width * 4 + extra;
-    return new RgbFrame(width, height, stride, dataSize);
+    return new RgbFrame(width, height, stride, dataSize, LibyuvWrapper::RGB565);
 }

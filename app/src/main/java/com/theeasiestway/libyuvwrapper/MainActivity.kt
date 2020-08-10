@@ -165,13 +165,13 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
-        yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
-        yuvUtils.rotate(rotate)
-        yuvUtils.mirrorH(mirrorH)
-        yuvUtils.mirrorV(mirrorV)
+    //    yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
+    //    yuvUtils.rotate(rotate)
+    //    yuvUtils.mirrorH(mirrorH)
+    //    yuvUtils.mirrorV(mirrorV)
 
     //    val frame = yuvUtils.getYUV(image)
-        val frame = yuvUtils.getRgb565(image)
+        val frame = yuvUtils.getBitmapRgb565(image)
     //    val frame = yuvUtils.getArgb(image)
 
         // before optimisation get frame time was: 108.0 ms.
@@ -192,9 +192,9 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             }
         }
 
-        val bytes = frame.getBytes()
+/*        val bytes = frame.getBytes()
         val array = ByteArray(bytes.remaining())
-        bytes.get(array)
+        bytes.get(array)*/
     //    Log.d("asdgdsgsd", "KOTLIN [0]: ${bytes.get(0)}; [100]: ${bytes.get(100)}; [200]: ${bytes.get(200)}; [500]: ${bytes.get(500)}")
 
 
@@ -207,12 +207,14 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
 
 
-        if (widthCurrent <= 0 || heightCurrent <= 0) return
+/*        if (widthCurrent <= 0 || heightCurrent <= 0) return
 
         val bm = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.RGB_565)
         bm.copyPixelsFromBuffer(frame.getBytes()) // for displaying argb
 
-        vImageView.post { vImageView.setImageBitmap(bm) }
+        vImageView.post { vImageView.setImageBitmap(bm) }*/
+
+        vImageView.post { vImageView.setImageBitmap(frame) }
 
         // before optimisation frame.destroy time was: 40.0 ms.
        // frame.destroy()
