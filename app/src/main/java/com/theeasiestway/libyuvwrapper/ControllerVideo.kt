@@ -68,6 +68,7 @@ object ControllerVideo {
             val cameraSelector = CameraSelector.Builder().requireLensFacing(facing).build()
 
             val imageAnalysis = ImageAnalysis.Builder()
+                .setTargetResolution(Size(1920, 1080))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
             imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { imageProxy ->

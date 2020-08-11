@@ -5,15 +5,11 @@
 #include <libyuv.h>
 #include "LibyuvWrapper.h"
 #include "factories/FramesFactory.h"
-#include "utils/logger.h"
+#include "utils/Logger.h"
 #include "utils/TimeCounter.h"
 
 YuvFrame* LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height) {
-    TimeCounter::setTime();
-
     YuvFrame *yuvFrame = instanceYuv(width, height);
-
-    TimeCounter::printTime("[to420()] instanceYuv()     ", true);
 
     libyuv::Android420ToI420(y, yStride,
                              u, uStride,
@@ -24,8 +20,7 @@ YuvFrame* LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride,
                              yuvFrame->v, yuvFrame->vStride,
                              width, height);
 
-    TimeCounter::printTime("[to420()] Android420ToI420()");
-
+    yuvFrame->fillData();
     return yuvFrame;
 }
 

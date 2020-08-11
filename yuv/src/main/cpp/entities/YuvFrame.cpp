@@ -3,7 +3,6 @@
 //
 
 #include "YuvFrame.h"
-#include "../utils/TimeCounter.h"
 
 YuvFrame::YuvFrame(int width, int height, int yStride, int uStride, int vStride, int ySize, int uSize, int vSize) {
     this->width = width;
@@ -34,24 +33,22 @@ void YuvFrame::update(YuvFrame& other) {
     vSize = other.vSize;
     dataSize = other.dataSize;
 
-    TimeCounter::setTime();
-
     release();
 
     y = (uint8_t*) malloc(sizeof(uint8_t) * ySize);
     u = (uint8_t*) malloc(sizeof(uint8_t) * uSize);
     v = (uint8_t*) malloc(sizeof(uint8_t) * vSize);
 
-    memmove(&y[0], &other.y[0], sizeof(uint8_t) * ySize);
-    memmove(&u[0], &other.u[0], sizeof(uint8_t) * uSize);
-    memmove(&v[0], &other.v[0], sizeof(uint8_t) * vSize);
+    memmove(y, other.y, sizeof(uint8_t) * ySize);
+    memmove(u, other.u, sizeof(uint8_t) * uSize);
+    memmove(v, other.v, sizeof(uint8_t) * vSize);
 
     fillData();
 }
 
 void YuvFrame::fillData() {
     data = (uint8_t*) malloc(sizeof(uint8_t) * dataSize);
-    memmove(&data[0], &y[0], sizeof(uint8_t) * ySize);
+    memmove(data, y, sizeof(uint8_t) * ySize);
     memmove(&data[ySize], &u[0], sizeof(uint8_t) * uSize);
     memmove(&data[ySize + uSize], &v[0], sizeof(uint8_t) * vSize);
 }

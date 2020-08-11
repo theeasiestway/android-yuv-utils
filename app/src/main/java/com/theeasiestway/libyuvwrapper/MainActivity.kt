@@ -158,6 +158,8 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         needToUpdateWH = true
     }
 
+    var maxTime = 0f
+
     private fun processImage(image: Image) {
 
         val startTime1 = System.currentTimeMillis()
@@ -165,20 +167,21 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
-    //    yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
-    //    yuvUtils.rotate(rotate)
-    //    yuvUtils.mirrorH(mirrorH)
-    //    yuvUtils.mirrorV(mirrorV)
+        yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
+        yuvUtils.rotate(rotate)
+        yuvUtils.mirrorH(mirrorH)
+        yuvUtils.mirrorV(mirrorV)
 
     //    val frame = yuvUtils.getYUV(image)
-        val frame = yuvUtils.getBitmapRgb565(image)
-    //    val frame = yuvUtils.getArgb(image)
+    //    val frame = yuvUtils.getBitmapRgb565(image)
+        val frame = yuvUtils.getBitmapArgb(image)
 
         // before optimisation get frame time was: 108.0 ms.
 
-    //    Log.d("wefewwef", "get frame time: ${(System.currentTimeMillis() - startTime1).toFloat()} ms.")
-
-        val startTime2 = System.currentTimeMillis()
+        if (maxTime < (System.currentTimeMillis() - startTime1).toFloat()) {
+            maxTime = (System.currentTimeMillis() - startTime1).toFloat()
+            Log.d("erfrf", "get frame time: $maxTime ms.")
+        }
 
         image.close()
 
@@ -195,7 +198,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 /*        val bytes = frame.getBytes()
         val array = ByteArray(bytes.remaining())
         bytes.get(array)*/
-    //    Log.d("asdgdsgsd", "KOTLIN [0]: ${bytes.get(0)}; [100]: ${bytes.get(100)}; [200]: ${bytes.get(200)}; [500]: ${bytes.get(500)}")
 
 
 /*        val yuvImage = YuvImage(array, ImageFormat.NV21, 640, 480, null)
@@ -205,20 +207,18 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         val imageBytes: ByteArray = out.toByteArray()
         val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)*/
 
-
-
 /*        if (widthCurrent <= 0 || heightCurrent <= 0) return
 
-        val bm = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.RGB_565)
+        val bm = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.ARGB_8888)
         bm.copyPixelsFromBuffer(frame.getBytes()) // for displaying argb
 
         vImageView.post { vImageView.setImageBitmap(bm) }*/
-
         vImageView.post { vImageView.setImageBitmap(frame) }
 
         // before optimisation frame.destroy time was: 40.0 ms.
-       // frame.destroy()
+        val startTime2 = System.currentTimeMillis()
+        //frame.destroy()
 
-        Log.d("wefewwef", "get bitmap time: ${(System.currentTimeMillis() - startTime2).toFloat()} ms.")
+        Log.d("uyjerer", "destroy time: ${(System.currentTimeMillis() - startTime2).toFloat()} ms.")
     }
 }

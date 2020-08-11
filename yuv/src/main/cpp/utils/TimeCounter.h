@@ -8,16 +8,15 @@
 #include <unistd.h>
 #include <chrono>
 #include <string>
-#include "logger.h"
+#include "Logger.h"
 
 static std::chrono::time_point<std::chrono::steady_clock> start, end;
-static std::string TAG = "TimeCounter";
-static std::string EMPTY = "";
+static const char *TAG = "TimeCounter";
+static const char *EMPTY = "";
 
 class TimeCounter {
 
 private:
-
     static void print(const char *tag, const char *methodName, bool setTime) {
         end = std::chrono::high_resolution_clock::now();
         auto duration = (double)std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() / (double)1000000;
@@ -26,17 +25,16 @@ private:
     }
 
 public:
-
     static void setTime() {
         start = std::chrono::high_resolution_clock::now();
     }
 
     static void printTime(bool setTime = false) {
-        print(TAG.data(), EMPTY.data(), setTime);
+        print(TAG, EMPTY, setTime);
     }
 
     static void printTime(const char *methodName, bool setTime = false) {
-        print(TAG.data(), methodName, setTime);
+        print(TAG, methodName, setTime);
     }
 
     static void printTime(const char *tag, const char *methodName, bool setTime = false) {

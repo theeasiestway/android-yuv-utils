@@ -12,5 +12,3 @@ RgbFrame::RgbFrame(int width, int height, int stride, int dataSize, int type) {
     this->type = type;
     data = (uint8_t*) malloc(sizeof(uint8_t) * dataSize);
 }
-
-RgbFrame::~RgbFrame() { /* nothing to do yet */ }

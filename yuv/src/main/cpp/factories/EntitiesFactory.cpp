@@ -4,7 +4,7 @@
 
 #include "EntitiesFactory.h"
 #include "../LibyuvWrapper.h"
-#include "../utils/logger.h"
+#include "../utils/Logger.h"
 #include <android/bitmap.h>
 
 //
@@ -96,25 +96,25 @@ void EntitiesFactory::init(JNIEnv &env) {
 
 jobject EntitiesFactory::instanceYuv(YuvFrame &frame, JNIEnv &env) {
     jobject instance = env.NewObject(classYuv, ctorYuv);
-    env.SetLongField(instance, pointerYuv, frame.getPointer(frame));
+    env.SetLongField(instance, pointerYuv, frame.getPointer());
     env.SetIntField(instance, widthYuv, frame.width);
     env.SetIntField(instance, heightYuv, frame.height);
     return instance;
 }
 
 jobject EntitiesFactory::instanceArgb(RgbFrame &frame, JNIEnv &env) {
-    if (frame.type != LibyuvWrapper::ARGB) return nullptr;
+    if (frame.type != LibyuvWrapper::ARGB) LOGE(TAG, "[instanceArgb] frame.type != LibyuvWrapper::ARGB");
     jobject instance = env.NewObject(classArgb, ctorArgb);
-    env.SetLongField(instance, pointerArgb, frame.getPointer(frame));
+    env.SetLongField(instance, pointerArgb, frame.getPointer());
     env.SetIntField(instance, widthArgb, frame.width);
     env.SetIntField(instance, heightArgb, frame.height);
     return instance;
 }
 
 jobject EntitiesFactory::instanceRgb565(RgbFrame &frame, JNIEnv &env) {
-    if (frame.type != LibyuvWrapper::RGB565) return nullptr;
+    if (frame.type != LibyuvWrapper::RGB565) LOGE(TAG, "[instanceRgb565] frame.type != LibyuvWrapper::RGB565");
     jobject instance = env.NewObject(classRgb565, ctorRgb565);
-    env.SetLongField(instance, pointerRgb565, frame.getPointer(frame));
+    env.SetLongField(instance, pointerRgb565, frame.getPointer());
     env.SetIntField(instance, widthRgb565, frame.width);
     env.SetIntField(instance, heightRgb565, frame.height);
     return instance;

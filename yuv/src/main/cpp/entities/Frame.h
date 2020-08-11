@@ -23,8 +23,8 @@ public:
     uint8_t* data = nullptr;
     int dataSize;
 
-    long getPointer(Frame &frame) {
-        return (long) &frame;
+    long getPointer() {
+        return (long) this;
     }
 
     ~Frame() {

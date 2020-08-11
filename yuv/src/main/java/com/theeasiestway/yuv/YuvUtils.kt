@@ -10,6 +10,14 @@ import java.nio.ByteBuffer
 // Created by Loboda Alexey on 22.06.2020.
 //
 
+/*
+ TODO:
+ 1. Get rid of memory leaks both java and native.
+ 2. Add clean up transformParams after return the result or before it's setup.
+ 3. Minimize processing time.
+
+ */
+
 class YuvUtils {
 
     companion object {
@@ -97,14 +105,14 @@ class YuvUtils {
         return transform(from, uvPixelStride) as ArgbFrame
     }
 
-    fun getBitmapArgb(from: Image): Bitmap {
+    fun getBitmapArgb(from: Image): Bitmap? {
         transformParams.returnType = Constants.BITMAP_ARGB
-        return transform(from) as Bitmap
+        return transform(from) as Bitmap?
     }
 
-    fun getBitmapArgb(from: YuvFrame, uvPixelStride: Int): Bitmap {
+    fun getBitmapArgb(from: YuvFrame, uvPixelStride: Int): Bitmap? {
         transformParams.returnType = Constants.BITMAP_ARGB
-        return transform(from, uvPixelStride) as Bitmap
+        return transform(from, uvPixelStride) as Bitmap?
     }
 
     //
@@ -121,14 +129,14 @@ class YuvUtils {
         return transform(from, uvPixelStride) as Rgb565Frame
     }
 
-    fun getBitmapRgb565(from: Image): Bitmap {
+    fun getBitmapRgb565(from: Image): Bitmap? {
         transformParams.returnType = Constants.BITMAP_RGB565
-        return transform(from) as Bitmap
+        return transform(from) as Bitmap?
     }
 
-    fun getBitmapRgb565(from: YuvFrame, uvPixelStride: Int): Bitmap {
+    fun getBitmapRgb565(from: YuvFrame, uvPixelStride: Int): Bitmap? {
         transformParams.returnType = Constants.BITMAP_RGB565
-        return transform(from, uvPixelStride) as Bitmap
+        return transform(from, uvPixelStride) as Bitmap?
     }
 
     //

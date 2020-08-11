@@ -23,7 +23,7 @@ add_library( # Sets the name of the library.
         LibyuvWrapper.cpp
         entities/RgbFrame.cpp
         entities/YuvFrame.cpp
-        easyyuv.cpp )
+        Easyyuv.cpp)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
