@@ -68,30 +68,12 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
     }
 
     //
-    // to Bitmap ARGB
-    //
-
-    if (returnType == LibyuvWrapper::BITMAP_ARGB) {
-        RgbFrame *rgbFrame = LibyuvWrapper::toArgbFrame(*yuvFrame);
-        return EntitiesFactory::instanceBitmapArgb(*rgbFrame, *env);
-    }
-
-    //
     // to RGB565
     //
 
     if (returnType == LibyuvWrapper::RGB565) {
         RgbFrame *rgbFrame = LibyuvWrapper::toRgb565Frame(*yuvFrame);
         return EntitiesFactory::instanceRgb565(*rgbFrame, *env);
-    }
-
-    //
-    // to Bitmap RGB565
-    //
-
-    if (returnType == LibyuvWrapper::BITMAP_RGB565) {
-        RgbFrame *rgbFrame = LibyuvWrapper::toRgb565Frame(*yuvFrame);
-        return EntitiesFactory::instanceBitmapRgb565(*rgbFrame, *env);
     }
 
     return EntitiesFactory::instanceYuv(*yuvFrame, *env);
@@ -101,20 +83,19 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_theeasiestway_yuv_entities_Frame_destroy(JNIEnv *env, jobject thiz, jlong pointer, jint classType) {
     switch (classType) {
-        case LibyuvWrapper::RGB565:
-        case LibyuvWrapper::ARGB: {
+        case LibyuvWrapper::ARGB:
+        case LibyuvWrapper::RGB565: {
             RgbFrame *rgbFrame = EntitiesFactory::fromPointer<RgbFrame>(pointer);
             delete rgbFrame;
             rgbFrame = nullptr;
             break;
         }
-        case LibyuvWrapper::YUV: {
-            default: {
-                YuvFrame *yuvFrame = EntitiesFactory::fromPointer<YuvFrame>(pointer);
-                delete yuvFrame;
-                yuvFrame = nullptr;
-                break;
-            }
+        case LibyuvWrapper::YUV:
+        default: {
+            YuvFrame *yuvFrame = EntitiesFactory::fromPointer<YuvFrame>(pointer);
+            delete yuvFrame;
+            yuvFrame = nullptr;
+            break;
         }
     }
 }
@@ -124,6 +105,21 @@ JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_Frame_getBytes(JNIEnv *env, jobject thiz, jlong pointer) {
     Frame *frame = EntitiesFactory::fromPointer<Frame>(pointer);
     return env->NewDirectByteBuffer(frame->data, frame->dataSize);
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_theeasiestway_yuv_entities_RgbFrame_getBitmap(JNIEnv *env, jobject thiz, jlong pointer, jint classType) {
+    switch (classType) {
+        case LibyuvWrapper::ARGB:
+        case LibyuvWrapper::RGB565: {
+            RgbFrame *rgbFrame = EntitiesFactory::fromPointer<RgbFrame>(pointer);
+            if (classType == LibyuvWrapper::RGB565) return EntitiesFactory::instanceBitmapRgb565(*rgbFrame, *env);
+            else return EntitiesFactory::instanceBitmapArgb(*rgbFrame, *env);
+        }
+        default:
+            return nullptr;
+    }
 }
 
 extern "C"

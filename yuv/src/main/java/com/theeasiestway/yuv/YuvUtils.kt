@@ -15,6 +15,7 @@ import java.nio.ByteBuffer
  1. Get rid of memory leaks both java and native.
  2. Add clean up transformParams after return the result or before it's setup.
  3. Minimize processing time.
+ 4. Add additional methods for rgbFrames e.g. convert from Argb to I420, rotate Rgb565, scale etc.
 
  */
 
@@ -105,14 +106,9 @@ class YuvUtils {
         return transform(from, uvPixelStride) as ArgbFrame
     }
 
-    fun getBitmapArgb(from: Image): Bitmap? {
-        transformParams.returnType = Constants.BITMAP_ARGB
-        return transform(from) as Bitmap?
-    }
-
-    fun getBitmapArgb(from: YuvFrame, uvPixelStride: Int): Bitmap? {
-        transformParams.returnType = Constants.BITMAP_ARGB
-        return transform(from, uvPixelStride) as Bitmap?
+    fun getArgb(from: RgbFrame): ArgbFrame {
+        transformParams.returnType = Constants.ARGB
+        return transform(from) as ArgbFrame
     }
 
     //
@@ -127,16 +123,6 @@ class YuvUtils {
     fun getRgb565(from: YuvFrame, uvPixelStride: Int): Rgb565Frame {
         transformParams.returnType = Constants.RGB565
         return transform(from, uvPixelStride) as Rgb565Frame
-    }
-
-    fun getBitmapRgb565(from: Image): Bitmap? {
-        transformParams.returnType = Constants.BITMAP_RGB565
-        return transform(from) as Bitmap?
-    }
-
-    fun getBitmapRgb565(from: YuvFrame, uvPixelStride: Int): Bitmap? {
-        transformParams.returnType = Constants.BITMAP_RGB565
-        return transform(from, uvPixelStride) as Bitmap?
     }
 
     //

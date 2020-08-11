@@ -173,8 +173,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         yuvUtils.mirrorV(mirrorV)
 
     //    val frame = yuvUtils.getYUV(image)
-    //    val frame = yuvUtils.getBitmapRgb565(image)
-        val frame = yuvUtils.getBitmapArgb(image)
+        val frame = yuvUtils.getArgb(image)
 
         // before optimisation get frame time was: 108.0 ms.
 
@@ -213,11 +212,10 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         bm.copyPixelsFromBuffer(frame.getBytes()) // for displaying argb
 
         vImageView.post { vImageView.setImageBitmap(bm) }*/
-        vImageView.post { vImageView.setImageBitmap(frame) }
+        vImageView.post { vImageView.setImageBitmap(frame.getBitmap()); frame.destroy() }
 
         // before optimisation frame.destroy time was: 40.0 ms.
         val startTime2 = System.currentTimeMillis()
-        //frame.destroy()
 
         Log.d("uyjerer", "destroy time: ${(System.currentTimeMillis() - startTime2).toFloat()} ms.")
     }
