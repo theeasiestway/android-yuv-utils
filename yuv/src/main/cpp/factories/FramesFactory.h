@@ -8,10 +8,13 @@
 #include "../entities/YuvFrame.h"
 #include "../entities/RgbFrame.h"
 
-YuvFrame* instanceYuv(int width, int height);
-YuvFrame* instanceYuv(int width, int height, int rotation);
-
-RgbFrame* instanceArgb(int width, int height);
-RgbFrame* instanceRgb565(int width, int height);
+class FramesFactory {
+public:
+    static YuvFrame* instanceYuv(int width, int height);
+    static YuvFrame* instanceYuv(int width, int height, int rotation);
+    static RgbFrame* instanceArgb(int width, int height);
+    static RgbFrame* instanceArgb(int width, int height, int rotation);
+    static RgbFrame* instanceRgb565(int width, int height);
+};
 
 #endif //LIBYUVWRAPPER_FRAMESFACTORY_H

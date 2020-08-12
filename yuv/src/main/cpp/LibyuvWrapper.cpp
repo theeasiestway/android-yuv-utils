@@ -5,12 +5,9 @@
 #include <libyuv.h>
 #include "LibyuvWrapper.h"
 #include "factories/FramesFactory.h"
-#include "utils/Logger.h"
-#include "utils/TimeCounter.h"
 
 YuvFrame* LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height) {
-    YuvFrame *yuvFrame = instanceYuv(width, height);
-
+    YuvFrame *yuvFrame = FramesFactory::instanceYuv(width, height);
     libyuv::Android420ToI420(y, yStride,
                              u, uStride,
                              v, vStride,
@@ -19,20 +16,34 @@ YuvFrame* LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride,
                              yuvFrame->u, yuvFrame->uStride,
                              yuvFrame->v, yuvFrame->vStride,
                              width, height);
+    yuvFrame->fillData();
+    return yuvFrame;
+}
 
+YuvFrame* LibyuvWrapper::to420(RgbFrame &in) {
+    YuvFrame *yuvFrame = FramesFactory::instanceYuv(in.width, in.height);
+    if (in.type == ARGB) {
+        libyuv::ARGBToI420(in.data, in.dataStride,
+                           yuvFrame->y, yuvFrame->yStride,
+                           yuvFrame->v, yuvFrame->vStride,
+                           yuvFrame->u, yuvFrame->uStride,
+                           in.width, in.height);
+    }
+
+    if (in.type == RGB565) {
+        libyuv::RGB565ToI420(in.data, in.dataStride,
+                             yuvFrame->y, yuvFrame->yStride,
+                             yuvFrame->u, yuvFrame->uStride,
+                             yuvFrame->v, yuvFrame->vStride,
+                             in.width, in.height);
+    }
     yuvFrame->fillData();
     return yuvFrame;
 }
 
 void LibyuvWrapper::scale(YuvFrame& in, int scaleWidth, int scaleHeight, int scaleFilter) {
     if (scaleWidth > 0 && scaleHeight > 0) {
-
-        TimeCounter::setTime();
-
-        YuvFrame* temp = instanceYuv(scaleWidth, scaleHeight);
-
-        TimeCounter::printTime("[scale] instanceYuv()", true);
-
+        YuvFrame* temp = FramesFactory::instanceYuv(scaleWidth, scaleHeight);
         libyuv::I420Scale(in.y, in.yStride,
                           in.u, in.uStride,
                           in.v, in.vStride,
@@ -41,28 +52,14 @@ void LibyuvWrapper::scale(YuvFrame& in, int scaleWidth, int scaleHeight, int sca
                           temp->u, temp->uStride,
                           temp->v, temp->vStride,
                           scaleWidth, scaleHeight, libyuv::FilterMode(scaleFilter));
-
-        TimeCounter::printTime("[scale] I420Scale()  ", true);
-
         in.update(*temp);
-
-        TimeCounter::printTime("[scale] update()     ", true);
-
         delete temp;
-
-        TimeCounter::printTime("[scale] delete temp  ");
     }
 }
 
 void LibyuvWrapper::rotate(YuvFrame &in, int rotationMode) {
     if (rotationMode >= 0) {
-
-        TimeCounter::setTime();
-
-        YuvFrame *temp = instanceYuv(in.width, in.height, rotationMode);
-
-        TimeCounter::printTime("[rotate] instanceYuv()", true);
-
+        YuvFrame *temp = FramesFactory::instanceYuv(in.width, in.height, rotationMode);
         libyuv::I420Rotate(in.y, in.yStride,
                            in.u, in.uStride,
                            in.v, in.vStride,
@@ -70,27 +67,13 @@ void LibyuvWrapper::rotate(YuvFrame &in, int rotationMode) {
                            temp->u, temp->uStride,
                            temp->v, temp->vStride,
                            in.width, in.height, libyuv::RotationMode(rotationMode));
-
-        TimeCounter::printTime("[rotate] I420Rotate() ", true);
-
         in.update(*temp);
-
-        TimeCounter::printTime("[rotate] update       ", true);
-
         delete temp;
-
-        TimeCounter::printTime("[rotate] delete temp  ", true);
     }
 }
 
 void LibyuvWrapper::mirrorH(YuvFrame &in) {
-
-    TimeCounter::setTime();
-
-    YuvFrame *temp = instanceYuv(in.width, in.height);
-
-    TimeCounter::printTime("[mirrorH] instanceYuv()", true);
-
+    YuvFrame *temp = FramesFactory::instanceYuv(in.width, in.height);
     libyuv::I420Mirror(in.y, in.yStride,
                        in.u, in.uStride,
                        in.v, in.vStride,
@@ -98,26 +81,12 @@ void LibyuvWrapper::mirrorH(YuvFrame &in) {
                        temp->u, temp->uStride,
                        temp->v, temp->vStride,
                        in.width, in.height);
-
-    TimeCounter::printTime("[mirrorH] I420Mirror() ", true);
-
     in.update(*temp);
-
-    TimeCounter::printTime("[mirrorH] update       ", true);
-
     delete temp;
-
-    TimeCounter::printTime("[mirrorH] delete temp  ", true);
 }
 
 void LibyuvWrapper::mirrorV(YuvFrame &in) {
-
-    TimeCounter::setTime();
-
-    YuvFrame *temp = instanceYuv(in.width, in.height, 0);
-
-    TimeCounter::printTime("[mirrorV] instanceYuv()", true);
-
+    YuvFrame *temp = FramesFactory::instanceYuv(in.width, in.height);
     libyuv::I420Rotate(in.y, in.yStride,
                        in.u, in.uStride,
                        in.v, in.vStride,
@@ -125,60 +94,50 @@ void LibyuvWrapper::mirrorV(YuvFrame &in) {
                        temp->u, temp->uStride,
                        temp->v, temp->vStride,
                        in.width, -in.height, libyuv::RotationMode(0));
-
-    TimeCounter::printTime("[mirrorV] I420Rotate() ", true);
-
     in.update(*temp);
-
-    TimeCounter::printTime("[mirrorV] update       ", true);
-
     delete temp;
-
-    TimeCounter::printTime("[mirrorV] delete temp  ", true);
 }
 
 RgbFrame* LibyuvWrapper::toArgbFrame(YuvFrame &in) {
-
-    TimeCounter::setTime();
-
-    RgbFrame *temp = instanceArgb(in.width, in.height);
-
-    TimeCounter::printTime("[toArgbFrame] instanceArgb()", true);
-
+    RgbFrame *temp = FramesFactory::instanceArgb(in.width, in.height);
     libyuv::I420ToARGB(in.y, in.yStride,
                        in.v, in.vStride, // exactly this order "YVU" and not "YUV", otherwise the colors are inverted
                        in.u, in.uStride,
-                       temp->data, temp->stride,
+                       temp->data, temp->dataStride,
                        in.width, in.height);
-
-    TimeCounter::printTime("[toArgbFrame] I420ToARGB()  ", true);
-
     delete &in;
-
-    TimeCounter::printTime("[toArgbFrame] delete &in    ", true);
-
     return temp;
 }
 
 RgbFrame* LibyuvWrapper::toRgb565Frame(YuvFrame &in) {
-
-    TimeCounter::setTime();
-
-    RgbFrame *temp = instanceRgb565(in.width, in.height);
-
-    TimeCounter::printTime("[toRgb565Frame] instanceRgb565()", true);
-
+    RgbFrame *temp = FramesFactory::instanceRgb565(in.width, in.height);
     libyuv::I420ToRGB565(in.y, in.yStride,
                          in.u, in.uStride,
                          in.v, in.vStride,
-                         temp->data, temp->stride,
+                         temp->data, temp->dataStride,
                          in.width, in.height);
-
-    TimeCounter::printTime("[toRgb565Frame] I420ToRGB565()  ", true);
-
     delete &in;
-
-    TimeCounter::printTime("[toRgb565Frame] delete &in      ", true);
-
     return temp;
+}
+
+void LibyuvWrapper::toArgbFrame(RgbFrame &in) {
+    if (in.type == RGB565) {
+        RgbFrame *temp = FramesFactory::instanceArgb(in.width, in.height);
+        libyuv::RGB565ToARGB(in.data, in.dataStride,
+                             temp->data, temp->dataStride,
+                             in.width, in.height);
+        in.update(temp);
+        delete temp;
+    }
+}
+
+void LibyuvWrapper::toRgb565Frame(RgbFrame &in) {
+    if (in.type == ARGB) {
+        RgbFrame *temp = FramesFactory::instanceRgb565(in.width, in.height);
+        libyuv::ARGBToRGB565(in.data, in.dataStride,
+                             temp->data, temp->dataStride,
+                             in.width, in.height);
+        in.update(temp);
+        delete temp;
+    }
 }

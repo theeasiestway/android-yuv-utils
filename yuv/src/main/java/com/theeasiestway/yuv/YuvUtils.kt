@@ -1,6 +1,5 @@
 package com.theeasiestway.yuv
 
-import android.graphics.Bitmap
 import android.media.Image
 import android.util.Log
 import com.theeasiestway.yuv.entities.*
@@ -92,6 +91,11 @@ class YuvUtils {
         return transform(from, uvPixelStride) as YuvFrame
     }
 
+    fun getI420(from: RgbFrame): YuvFrame {
+        transformParams.returnType = Constants.I420
+        return transform(from) as YuvFrame
+    }
+
     //
     // Convert to ARGB
     //
@@ -130,42 +134,80 @@ class YuvUtils {
     //
 
     private fun transform(image: Image): Any {
-        return transformNative(image.planes[0].buffer,
-            image.planes[1].buffer,
-            image.planes[2].buffer,
-            image.planes[0].rowStride,
-            image.planes[1].rowStride,
-            image.planes[2].rowStride,
-            image.planes[2].pixelStride,
-            image.width,
-            image.height,
-            transformParams.scaleWidth,
-            transformParams.scaleHeight,
-            transformParams.scaleFilter,
-            transformParams.rotationMode,
-            transformParams.mirrorH,
-            transformParams.mirrorV,
-            transformParams.returnType)
+        try {
+            return transformNative(image.planes[0].buffer,
+                image.planes[1].buffer,
+                image.planes[2].buffer,
+                image.planes[0].rowStride,
+                image.planes[1].rowStride,
+                image.planes[2].rowStride,
+                image.planes[2].pixelStride,
+                image.width,
+                image.height,
+                transformParams.scaleWidth,
+                transformParams.scaleHeight,
+                transformParams.scaleFilter,
+                transformParams.rotationMode,
+                transformParams.mirrorH,
+                transformParams.mirrorV,
+                transformParams.returnType)
+        } catch (e: Exception) {
+            Log.e(TAG, "[transform Image] error: $e")
+            throw e
+        }
+        finally { transformParams.clear() }
+    }
+
+    private fun transform(frame: RgbFrame): Any {
+        try {
+            return transformNative(
+                frame.getBytes(),
+                frame.dataSize,
+                frame.dataStride,
+                frame.width,
+                frame.height,
+                frame.getType(),
+                transformParams.returnType)
+        } catch (e: Exception) {
+            Log.e(TAG, "[transform RgbFrame] error: $e")
+            throw e
+        }
+        finally { transformParams.clear() }
     }
 
     private fun transform(yuvFrame: YuvFrame, uvPixelStride: Int): Any {
-        return transformNative(yuvFrame.y,
-            yuvFrame.u,
-            yuvFrame.v,
-            yuvFrame.yStride,
-            yuvFrame.uStride,
-            yuvFrame.vStride,
-            uvPixelStride,
-            yuvFrame.width,
-            yuvFrame.height,
-            transformParams.scaleWidth,
-            transformParams.scaleHeight,
-            transformParams.scaleFilter,
-            transformParams.rotationMode,
-            transformParams.mirrorH,
-            transformParams.mirrorV,
-            transformParams.returnType)
+        try {
+            return transformNative(
+                yuvFrame.getBytesY(),
+                yuvFrame.getBytesU(),
+                yuvFrame.getBytesV(),
+                yuvFrame.yStride,
+                yuvFrame.uStride,
+                yuvFrame.vStride,
+                uvPixelStride,
+                yuvFrame.width,
+                yuvFrame.height,
+                transformParams.scaleWidth,
+                transformParams.scaleHeight,
+                transformParams.scaleFilter,
+                transformParams.rotationMode,
+                transformParams.mirrorH,
+                transformParams.mirrorV,
+                transformParams.returnType)
+        } catch (e: Exception) {
+            Log.e(TAG, "[transform YuvFrame] error: $e")
+            throw e
+        }
+        finally { transformParams.clear() }
     }
+
+    private external fun transformNative(data: ByteBuffer,
+                                         dataSize: Int,
+                                         dataStride: Int,
+                                         width: Int,
+                                         height: Int,
+                                         classType: Int,
+                                         returnType: Int): Any
 
     private external fun transformNative(y: ByteBuffer,
                                          u: ByteBuffer,

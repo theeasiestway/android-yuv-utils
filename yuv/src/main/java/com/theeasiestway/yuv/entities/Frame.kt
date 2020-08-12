@@ -14,8 +14,11 @@ abstract class Frame() {
 
     abstract fun getType(): Int
 
-    fun destroy() { destroy(nativePointer, getType()) }
-    fun getBytes() = getBytes(nativePointer)
+    fun destroy() {
+        destroy(nativePointer, getType())
+        //TODO check with nativePointer = -1L
+    }
+    open fun getBytes() = getBytes(nativePointer)
 
     private external fun destroy(pointer: Long, classType: Int)
     private external fun getBytes(pointer: Long): ByteBuffer

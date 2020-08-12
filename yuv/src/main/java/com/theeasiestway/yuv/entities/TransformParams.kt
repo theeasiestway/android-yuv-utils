@@ -8,8 +8,6 @@ import com.theeasiestway.yuv.Constants
 
 class TransformParams {
 
-    var returnType = -1
-
     var scaleWidth = -1
     var scaleHeight = -1
     var scaleFilter = Constants.FILTER_NONE
@@ -19,9 +17,9 @@ class TransformParams {
     var mirrorH = false
     var mirrorV = false
 
-    fun clear() {
-        returnType = -1
+    var returnType = -1
 
+    fun clear() {
         scaleWidth = -1
         scaleHeight = -1
         scaleFilter = Constants.FILTER_NONE
@@ -30,5 +28,7 @@ class TransformParams {
 
         mirrorH = false
         mirrorV = false
+
+        returnType = -1
     }
 }

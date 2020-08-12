@@ -13,9 +13,10 @@ class RgbFrame: public Frame {
 
 public:
     RgbFrame(int width, int height, int stride, int dataSize, int type);
-
+    RgbFrame(int width, int height, uint8_t *data, int dataSize, int stride, int type);
+    void update(RgbFrame* other);
     int type;
-    int stride;
+    int dataStride;
 };
 
 #endif //LIBYUVWRAPPER_RGBFRAME_H

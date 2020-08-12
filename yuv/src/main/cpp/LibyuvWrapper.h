@@ -11,28 +11,21 @@
 class LibyuvWrapper {
 
 public:
-
     static const int YUV = 0;
     static const int I420 = 1;
     static const int ARGB = 2;
     static const int RGB565 = 3;
-    static const int BITMAP_ARGB = 4;
-    static const int BITMAP_RGB565 = 5;
 
-    static YuvFrame* to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height);
-
+    static YuvFrame* to420(uint8_t *y, int yStride, uint8_t *u, int uStride, uint8_t *v, int vStride, int uvPixelStride, int width, int height);
+    static YuvFrame* to420(RgbFrame& in);
     static void scale(YuvFrame& in, int scaleWidth, int scaleHeight, int scaleFilter);
-
     static void rotate(YuvFrame& in, int rotationMode);
-
     static void mirrorH(YuvFrame& in);
-
     static void mirrorV(YuvFrame& in);
-
     static RgbFrame* toArgbFrame(YuvFrame& in);
-
+    static void toArgbFrame(RgbFrame& in);
     static RgbFrame* toRgb565Frame(YuvFrame& in);
+    static void toRgb565Frame(RgbFrame& in);
 };
-
 
 #endif //LIBYUVWRAPPER_LIBYUVWRAPPER_H

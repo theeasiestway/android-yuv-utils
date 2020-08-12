@@ -167,13 +167,15 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
+        val argb = yuvUtils.getArgb(image)
+        val yuv = yuvUtils.getI420(argb)
+
         yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
         yuvUtils.rotate(rotate)
         yuvUtils.mirrorH(mirrorH)
         yuvUtils.mirrorV(mirrorV)
+        val frame = yuvUtils.getRgb565(yuv, 1)
 
-    //    val frame = yuvUtils.getYUV(image)
-        val frame = yuvUtils.getArgb(image)
 
         // before optimisation get frame time was: 108.0 ms.
 

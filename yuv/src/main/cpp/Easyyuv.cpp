@@ -1,15 +1,9 @@
 #include <jni.h>
-#include <string>
-#include <vector>
-#include <libyuv/scale.h>
-#include "libyuv.h"
-#include "utils/Logger.h"
 #include "entities/rgbFrame.h"
 #include "entities/yuvFrame.h"
 #include "factories/FramesFactory.h"
 #include "factories/EntitiesFactory.h"
 #include "LibyuvWrapper.h"
-#include "utils/TimeCounter.h"
 
 //
 // Created by Loboda Alexey on 22.06.2020.
@@ -17,13 +11,23 @@
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
-                                                    jobject y, jobject u, jobject v,
-                                                    jint yStride, jint uStride, jint vStride, jint uvPixelStride,
-                                                    jint width, jint height,
-                                                    jint scaleWidth, jint scaleHeight, jint scaleFilter,
-                                                    jint rotationMode, jboolean mirrorH,
-                                                    jboolean mirrorV, jint returnType) {
+Java_com_theeasiestway_yuv_YuvUtils_transformNative__Ljava_nio_ByteBuffer_2Ljava_nio_ByteBuffer_2Ljava_nio_ByteBuffer_2IIIIIIIIIIZZI(JNIEnv *env, jobject thiz,
+                                                    jobject y,
+                                                    jobject u,
+                                                    jobject v,
+                                                    jint yStride,
+                                                    jint uStride,
+                                                    jint vStride,
+                                                    jint uvPixelStride,
+                                                    jint width,
+                                                    jint height,
+                                                    jint scaleWidth,
+                                                    jint scaleHeight,
+                                                    jint scaleFilter,
+                                                    jint rotationMode,
+                                                    jboolean mirrorH,
+                                                    jboolean mirrorV,
+                                                    jint returnType) {
 
     //
     // to I420
@@ -76,6 +80,44 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative(JNIEnv *env, jobject thiz,
         return EntitiesFactory::instanceRgb565(*rgbFrame, *env);
     }
 
+    return EntitiesFactory::instanceYuv(*yuvFrame, *env);
+}
+
+extern "C"
+JNIEXPORT jobject JNICALL
+Java_com_theeasiestway_yuv_YuvUtils_transformNative__Ljava_nio_ByteBuffer_2IIIIII(JNIEnv *env,
+                                                                                       jobject thiz,
+                                                                                       jobject data,
+                                                                                       jint dataSize,
+                                                                                       jint dataStride,
+                                                                                       jint width,
+                                                                                       jint height,
+                                                                                       jint classType,
+                                                                                       jint returnType) {
+    RgbFrame *rgbFrame = new RgbFrame(width, height, dataStride, dataSize, classType);
+    rgbFrame->data = (uint8_t*) env->GetDirectBufferAddress(data);
+
+    //
+    // to ARGB
+    //
+
+    if (rgbFrame->type != returnType && returnType == LibyuvWrapper::ARGB) {
+        LibyuvWrapper::toArgbFrame(*rgbFrame);
+        return EntitiesFactory::instanceArgb(*rgbFrame, *env);
+    }
+
+    //
+    // to RGB565
+    //
+
+    if (rgbFrame->type != returnType && returnType == LibyuvWrapper::RGB565) {
+        LibyuvWrapper::toRgb565Frame(*rgbFrame);
+        return EntitiesFactory::instanceRgb565(*rgbFrame, *env);
+    }
+
+    YuvFrame *yuvFrame = LibyuvWrapper::to420(*rgbFrame);
+    delete(rgbFrame);
+    rgbFrame = nullptr;
     return EntitiesFactory::instanceYuv(*yuvFrame, *env);
 }
 
