@@ -105,7 +105,6 @@ RgbFrame* LibyuvWrapper::toArgbFrame(YuvFrame &in) {
                        in.u, in.uStride,
                        temp->data, temp->dataStride,
                        in.width, in.height);
-    delete &in;
     return temp;
 }
 
@@ -116,7 +115,6 @@ RgbFrame* LibyuvWrapper::toRgb565Frame(YuvFrame &in) {
                          in.v, in.vStride,
                          temp->data, temp->dataStride,
                          in.width, in.height);
-    delete &in;
     return temp;
 }
 

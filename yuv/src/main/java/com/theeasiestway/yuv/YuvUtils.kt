@@ -12,7 +12,6 @@ import java.nio.ByteBuffer
 /*
  TODO:
  1. Get rid of memory leaks both java and native.
- 2. Add clean up transformParams after return the result or before it's setup.
  3. Minimize processing time.
  4. Add additional methods for rgbFrames e.g. convert from Argb to I420, rotate Rgb565, scale etc.
 

@@ -167,15 +167,18 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
-        val argb = yuvUtils.getArgb(image)
+        val argb = yuvUtils.getRgb565(image)
         val yuv = yuvUtils.getI420(argb)
 
-        yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
-        yuvUtils.rotate(rotate)
-        yuvUtils.mirrorH(mirrorH)
-        yuvUtils.mirrorV(mirrorV)
-        val frame = yuvUtils.getRgb565(yuv, 1)
+    //    yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
+    //    yuvUtils.rotate(rotate)
+    //    yuvUtils.mirrorH(mirrorH)
+    //    yuvUtils.mirrorV(mirrorV)
+    //    val frame = yuvUtils.getRgb565(yuv, 1)
 
+        argb.destroy()  // TODO I checked it for memory leaks and they were not found
+        yuv.destroy()
+    //    frame.destroy()
 
         // before optimisation get frame time was: 108.0 ms.
 
@@ -214,11 +217,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         bm.copyPixelsFromBuffer(frame.getBytes()) // for displaying argb
 
         vImageView.post { vImageView.setImageBitmap(bm) }*/
-        vImageView.post { vImageView.setImageBitmap(frame.getBitmap()); frame.destroy() }
+        //vImageView.post { vImageView.setImageBitmap(frame.getBitmap()); frame.destroy() }
 
         // before optimisation frame.destroy time was: 40.0 ms.
         val startTime2 = System.currentTimeMillis()
 
-        Log.d("uyjerer", "destroy time: ${(System.currentTimeMillis() - startTime2).toFloat()} ms.")
+     //   Log.d("uyjerer", "destroy time: ${(System.currentTimeMillis() - startTime2).toFloat()} ms.")
     }
 }

@@ -68,6 +68,7 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative__Ljava_nio_ByteBuffer_2Ljava
 
     if (returnType == LibyuvWrapper::ARGB) {
         RgbFrame *rgbFrame = LibyuvWrapper::toArgbFrame(*yuvFrame);
+        delete yuvFrame;
         return EntitiesFactory::instanceArgb(*rgbFrame, *env);
     }
 
@@ -77,6 +78,7 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative__Ljava_nio_ByteBuffer_2Ljava
 
     if (returnType == LibyuvWrapper::RGB565) {
         RgbFrame *rgbFrame = LibyuvWrapper::toRgb565Frame(*yuvFrame);
+        delete yuvFrame;
         return EntitiesFactory::instanceRgb565(*rgbFrame, *env);
     }
 
@@ -116,8 +118,6 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative__Ljava_nio_ByteBuffer_2IIIII
     }
 
     YuvFrame *yuvFrame = LibyuvWrapper::to420(*rgbFrame);
-    delete(rgbFrame);
-    rgbFrame = nullptr;
     return EntitiesFactory::instanceYuv(*yuvFrame, *env);
 }
 
@@ -146,6 +146,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_Frame_getBytes(JNIEnv *env, jobject thiz, jlong pointer) {
     Frame *frame = EntitiesFactory::fromPointer<Frame>(pointer);
+    if (frame == nullptr) return env->NewDirectByteBuffer(nullptr, 0);
     return env->NewDirectByteBuffer(frame->data, frame->dataSize);
 }
 
@@ -168,6 +169,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getY(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = EntitiesFactory::fromPointer<YuvFrame>(pointer);
+    if (frame == nullptr) return env->NewDirectByteBuffer(nullptr, 0);
     return env->NewDirectByteBuffer(frame->y, frame->ySize);
 }
 
@@ -175,6 +177,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getU(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = EntitiesFactory::fromPointer<YuvFrame>(pointer);
+    if (frame == nullptr) return env->NewDirectByteBuffer(nullptr, 0);
     return env->NewDirectByteBuffer(frame->u, frame->uSize);
 }
 
@@ -182,6 +185,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getV(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = EntitiesFactory::fromPointer<YuvFrame>(pointer);
+    if (frame == nullptr) return env->NewDirectByteBuffer(nullptr, 0);
     return env->NewDirectByteBuffer(frame->v, frame->vSize);
 }
 
