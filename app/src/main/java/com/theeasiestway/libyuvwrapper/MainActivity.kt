@@ -16,6 +16,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.theeasiestway.codec_h264.camera.ControllerVideo
 import com.theeasiestway.yuv.Constants
 import com.theeasiestway.yuv.YuvUtils
+import com.theeasiestway.yuv.entities.RgbFrame
 import com.theeasiestway.yuv.entities.YuvFrame
 import java.io.ByteArrayOutputStream
 
@@ -130,7 +131,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == 1 && permissions[0] == PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+        if (grantResults.isNotEmpty() && requestCode == 1 && permissions[0] == PERMISSION_CAMERA && grantResults[0] == PackageManager.PERMISSION_GRANTED)
             startCamera()
         else Toast.makeText(this, "App doesn't have enough permissions to continue", Toast.LENGTH_LONG).show()
     }
@@ -167,18 +168,18 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
-        val argb = yuvUtils.getRgb565(image)
-        val yuv = yuvUtils.getI420(argb)
+        //    val argb = yuvUtils.getRgb565(image)
+        //    val yuv = yuvUtils.getI420(argb)
 
-    //    yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
-    //    yuvUtils.rotate(rotate)
-    //    yuvUtils.mirrorH(mirrorH)
-    //    yuvUtils.mirrorV(mirrorV)
-    //    val frame = yuvUtils.getRgb565(yuv, 1)
+        val frame = yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX).getI420(image)
+        //    yuvUtils.rotate(rotate)
+        //    yuvUtils.mirrorH(mirrorH)
+        //    yuvUtils.mirrorV(mirrorV)
+        //    val frame = yuvUtils.getRgb565(yuv, 1)
 
-        argb.destroy()  // TODO I checked it for memory leaks and they were not found
-        yuv.destroy()
-    //    frame.destroy()
+        //    argb.destroy()  // TODO I checked it for memory leaks and they were not found
+        //    yuv.destroy()
+        //    frame.destroy()
 
         // before optimisation get frame time was: 108.0 ms.
 
@@ -199,29 +200,39 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             }
         }
 
-/*        val bytes = frame.getBytes()
-        val array = ByteArray(bytes.remaining())
-        bytes.get(array)*/
+        if (widthCurrent <= 0 || heightCurrent <= 0) {
+            frame.destroy()
+            return
+        }
 
+        renderYuv(frame)
 
-/*        val yuvImage = YuvImage(array, ImageFormat.NV21, 640, 480, null)
-
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, 640, 480), 50, out)
-        val imageBytes: ByteArray = out.toByteArray()
-        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)*/
-
-/*        if (widthCurrent <= 0 || heightCurrent <= 0) return
-
-        val bm = Bitmap.createBitmap(frame.width, frame.height, Bitmap.Config.ARGB_8888)
-        bm.copyPixelsFromBuffer(frame.getBytes()) // for displaying argb
-
-        vImageView.post { vImageView.setImageBitmap(bm) }*/
-        //vImageView.post { vImageView.setImageBitmap(frame.getBitmap()); frame.destroy() }
+    //    renderRgb(frame)
 
         // before optimisation frame.destroy time was: 40.0 ms.
         val startTime2 = System.currentTimeMillis()
 
-     //   Log.d("uyjerer", "destroy time: ${(System.currentTimeMillis() - startTime2).toFloat()} ms.")
+        //   Log.d("uyjerer", "destroy time: ${(System.currentTimeMillis() - startTime2).toFloat()} ms.")
+    }
+
+    private fun renderYuv(frame: YuvFrame) {
+        val bytes = frame.getBytes()
+        val array = ByteArray(bytes.remaining())
+        bytes.get(array)
+
+
+        val yuvImage = YuvImage(array, ImageFormat.NV21, frame.width, frame.height, null)
+
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, frame.width, frame.height), 100, out)
+        val imageBytes: ByteArray = out.toByteArray()
+        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+        vImageView.post { vImageView.setImageBitmap(bm) }
+
+        frame.destroy()
+    }
+
+    private fun renderRgb(frame: RgbFrame) {
+        vImageView.post { vImageView.setImageBitmap(frame.getBitmap()); frame.destroy() }
     }
 }

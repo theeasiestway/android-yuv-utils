@@ -33,7 +33,7 @@ void YuvFrame::update(YuvFrame& other) {
     vSize = other.vSize;
     dataSize = other.dataSize;
 
-    release();
+    YuvFrame::release();
 
     y = (uint8_t*) malloc(sizeof(uint8_t) * ySize);
     u = (uint8_t*) malloc(sizeof(uint8_t) * uSize);
@@ -54,7 +54,13 @@ void YuvFrame::fillData() {
 }
 
 YuvFrame::~YuvFrame() {
-    release();
+    YuvFrame::release();
+    ySize = -1;
+    uSize = -1;
+    vSize = -1;
+    yStride = -1;
+    uStride = -1;
+    vStride = -1;
 }
 
 void YuvFrame::release() {

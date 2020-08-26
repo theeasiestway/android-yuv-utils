@@ -27,12 +27,12 @@ RgbFrame* FramesFactory::instanceArgb(int width, int height) {
     int dataSize = (width * height) * 32;
     int extra = width % 2 == 0 ? 0 : 1;
     int stride = width * 4 + extra;
-    return new RgbFrame(width, height, stride, dataSize, LibyuvWrapper::ARGB);
+    return new RgbFrame(width, height, dataSize, stride, LibyuvWrapper::ARGB);
 }
 
 RgbFrame* FramesFactory::instanceRgb565(int width, int height) {
     int dataSize = (width * height) * 16;
     int extra = width % 2 == 0 ? 0 : 1;
     int stride = width * 4 + extra;
-    return new RgbFrame(width, height, stride, dataSize, LibyuvWrapper::RGB565);
+    return new RgbFrame(width, height, dataSize, stride, LibyuvWrapper::RGB565);
 }

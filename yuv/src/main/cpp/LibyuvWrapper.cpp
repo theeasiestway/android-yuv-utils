@@ -5,6 +5,7 @@
 #include <libyuv.h>
 #include "LibyuvWrapper.h"
 #include "factories/FramesFactory.h"
+#include "utils/Logger.h"
 
 YuvFrame* LibyuvWrapper::to420(uint8_t* y, int yStride, uint8_t* u, int uStride, uint8_t* v, int vStride, int uvPixelStride, int width, int height) {
     YuvFrame *yuvFrame = FramesFactory::instanceYuv(width, height);
@@ -42,7 +43,8 @@ YuvFrame* LibyuvWrapper::to420(RgbFrame &in) {
 }
 
 void LibyuvWrapper::scale(YuvFrame& in, int scaleWidth, int scaleHeight, int scaleFilter) {
-    if (scaleWidth > 0 && scaleHeight > 0) {
+    if (scaleWidth > 0 && scaleHeight > 0 && (in.width != scaleWidth || in.height != scaleHeight)) {
+        LOGE("Qdqwdqwdqw", "scale in width: %d, height: %d; scaleWidth: %d, scaleHeight: %d", in.width, in.height, scaleWidth, scaleHeight);
         YuvFrame* temp = FramesFactory::instanceYuv(scaleWidth, scaleHeight);
         libyuv::I420Scale(in.y, in.yStride,
                           in.u, in.uStride,
@@ -124,7 +126,7 @@ void LibyuvWrapper::toArgbFrame(RgbFrame &in) {
         libyuv::RGB565ToARGB(in.data, in.dataStride,
                              temp->data, temp->dataStride,
                              in.width, in.height);
-        in.update(temp);
+        in.update(*temp);
         delete temp;
     }
 }
@@ -135,7 +137,7 @@ void LibyuvWrapper::toRgb565Frame(RgbFrame &in) {
         libyuv::ARGBToRGB565(in.data, in.dataStride,
                              temp->data, temp->dataStride,
                              in.width, in.height);
-        in.update(temp);
+        in.update(*temp);
         delete temp;
     }
 }

@@ -4,6 +4,7 @@
 #include "factories/FramesFactory.h"
 #include "factories/EntitiesFactory.h"
 #include "LibyuvWrapper.h"
+#include "utils/Logger.h"
 
 //
 // Created by Loboda Alexey on 22.06.2020.
@@ -42,7 +43,7 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative__Ljava_nio_ByteBuffer_2Ljava
     // Scale
     //
 
-    if (scaleWidth > 0 && scaleHeight > 0) LibyuvWrapper::scale(*yuvFrame, scaleWidth, scaleHeight, scaleFilter);
+    if (scaleWidth > 0 && scaleHeight > 0 && (yuvFrame->width != scaleWidth || yuvFrame->height != scaleHeight)) LibyuvWrapper::scale(*yuvFrame, scaleWidth, scaleHeight, scaleFilter);
 
     //
     // Rotate
@@ -96,8 +97,7 @@ Java_com_theeasiestway_yuv_YuvUtils_transformNative__Ljava_nio_ByteBuffer_2IIIII
                                                                                        jint height,
                                                                                        jint classType,
                                                                                        jint returnType) {
-    RgbFrame *rgbFrame = new RgbFrame(width, height, dataStride, dataSize, classType);
-    rgbFrame->data = (uint8_t*) env->GetDirectBufferAddress(data);
+    RgbFrame *rgbFrame = new RgbFrame(width, height, *(uint8_t*) env->GetDirectBufferAddress(data), dataSize, dataStride, classType);
 
     //
     // to ARGB
@@ -146,7 +146,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_Frame_getBytes(JNIEnv *env, jobject thiz, jlong pointer) {
     Frame *frame = EntitiesFactory::fromPointer<Frame>(pointer);
-    if (frame == nullptr) return env->NewDirectByteBuffer(nullptr, 0);
+    if (frame == nullptr || frame->dataSize <= 0) return env->NewDirectByteBuffer(nullptr, 0);
     return env->NewDirectByteBuffer(frame->data, frame->dataSize);
 }
 
@@ -169,7 +169,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getY(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = EntitiesFactory::fromPointer<YuvFrame>(pointer);
-    if (frame == nullptr) return env->NewDirectByteBuffer(nullptr, 0);
+    if (frame == nullptr || frame->ySize <= 0) return env->NewDirectByteBuffer(nullptr, 0);
     return env->NewDirectByteBuffer(frame->y, frame->ySize);
 }
 
@@ -177,7 +177,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getU(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = EntitiesFactory::fromPointer<YuvFrame>(pointer);
-    if (frame == nullptr) return env->NewDirectByteBuffer(nullptr, 0);
+    if (frame == nullptr || frame->uSize <= 0) return env->NewDirectByteBuffer(nullptr, 0);
     return env->NewDirectByteBuffer(frame->u, frame->uSize);
 }
 
@@ -185,7 +185,7 @@ extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_YuvFrame_getV(JNIEnv *env, jobject thiz, jlong pointer) {
     YuvFrame *frame = EntitiesFactory::fromPointer<YuvFrame>(pointer);
-    if (frame == nullptr) return env->NewDirectByteBuffer(nullptr, 0);
+    if (frame == nullptr || frame->vSize <= 0) return env->NewDirectByteBuffer(nullptr, 0);
     return env->NewDirectByteBuffer(frame->v, frame->vSize);
 }
 
