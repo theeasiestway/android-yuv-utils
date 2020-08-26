@@ -168,18 +168,20 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
-        //    val argb = yuvUtils.getRgb565(image)
-        //    val yuv = yuvUtils.getI420(argb)
+/*        val frame = yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
+            .rotate(rotate)
+            .mirrorH(mirrorH)
+            .mirrorV(mirrorV)
+            .getI420(image)*/
 
-        val frame = yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX).getI420(image)
-        //    yuvUtils.rotate(rotate)
-        //    yuvUtils.mirrorH(mirrorH)
-        //    yuvUtils.mirrorV(mirrorV)
-        //    val frame = yuvUtils.getRgb565(yuv, 1)
+        val i420 = yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
+            .rotate(rotate)
+            .mirrorH(mirrorH)
+            .mirrorV(mirrorV)
+            .getI420(image)
+        val argb = yuvUtils.getArgb(i420, image.planes[2].pixelStride)
 
-        //    argb.destroy()  // TODO I checked it for memory leaks and they were not found
-        //    yuv.destroy()
-        //    frame.destroy()
+        i420.destroy()
 
         // before optimisation get frame time was: 108.0 ms.
 
@@ -201,13 +203,13 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         }
 
         if (widthCurrent <= 0 || heightCurrent <= 0) {
-            frame.destroy()
+            argb.destroy()
             return
         }
 
-        renderYuv(frame)
+        //    renderYuv(frame)
 
-    //    renderRgb(frame)
+        renderRgb(argb)
 
         // before optimisation frame.destroy time was: 40.0 ms.
         val startTime2 = System.currentTimeMillis()
