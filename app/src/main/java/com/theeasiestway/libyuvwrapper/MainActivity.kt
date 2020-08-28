@@ -7,6 +7,8 @@ import android.media.Image
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -30,7 +32,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
     private val yuvUtils = YuvUtils()
     private lateinit var vCameraFacing: ImageView
     private lateinit var vCameraView: PreviewView
-    private lateinit var vImageView: ImageView
+    private lateinit var vSurfaceView: SurfaceView
     private lateinit var vPlay: Button
     private lateinit var vStop: Button
     private lateinit var vWidth: SeekBar
@@ -73,7 +75,12 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         }
 
         vCameraView = findViewById(R.id.vCameraPreview)
-        vImageView = findViewById(R.id.vImageView)
+        vSurfaceView = findViewById(R.id.vSurfaceView)
+        vSurfaceView.holder.addCallback(object: SurfaceHolder.Callback {
+            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) = Unit
+            override fun surfaceDestroyed(holder: SurfaceHolder?) { SurfaceDrawer.setSurface(null) }
+            override fun surfaceCreated(holder: SurfaceHolder?) { SurfaceDrawer.setSurface(holder?.surface) }
+        })
 
         vPlay = findViewById(R.id.vPlay)
         vPlay.setOnClickListener { requestPermissions() }
@@ -168,18 +175,12 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         width = image.width
         height = image.height
 
-/*        val frame = yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
-            .rotate(rotate)
-            .mirrorH(mirrorH)
-            .mirrorV(mirrorV)
-            .getI420(image)*/
-
         val i420 = yuvUtils.scale(widthCurrent, heightCurrent, Constants.FILTER_BOX)
             .rotate(rotate)
             .mirrorH(mirrorH)
             .mirrorV(mirrorV)
             .getI420(image)
-        val argb = yuvUtils.getArgb(i420, image.planes[2].pixelStride)
+        val rgb = yuvUtils.getRgb565(i420, 1)
 
         i420.destroy()
 
@@ -203,13 +204,13 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         }
 
         if (widthCurrent <= 0 || heightCurrent <= 0) {
-            argb.destroy()
+            rgb.destroy()
             return
         }
 
         //    renderYuv(frame)
 
-        renderRgb(argb)
+        renderRgb(rgb)
 
         // before optimisation frame.destroy time was: 40.0 ms.
         val startTime2 = System.currentTimeMillis()
@@ -229,12 +230,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         yuvImage.compressToJpeg(Rect(0, 0, frame.width, frame.height), 100, out)
         val imageBytes: ByteArray = out.toByteArray()
         val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        vImageView.post { vImageView.setImageBitmap(bm) }
-
+        SurfaceDrawer.draw(bm)
         frame.destroy()
     }
 
     private fun renderRgb(frame: RgbFrame) {
-        vImageView.post { vImageView.setImageBitmap(frame.getBitmap()); frame.destroy() }
+        SurfaceDrawer.draw(frame)
     }
 }

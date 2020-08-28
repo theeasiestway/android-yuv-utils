@@ -109,11 +109,6 @@ class YuvUtils {
         return transform(from, uvPixelStride) as ArgbFrame
     }
 
-    fun getArgb(from: RgbFrame): ArgbFrame {
-        transformParams.returnType = Constants.ARGB
-        return transform(from) as ArgbFrame
-    }
-
     //
     // Convert RGB565
     //

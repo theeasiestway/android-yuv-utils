@@ -51,12 +51,11 @@
                 android:gravity="center"
                 android:layout_marginStart="16dp">
 
-                <ImageView
-                    android:id="@+id/vImageView"
+                <SurfaceView
+                    android:id="@+id/vSurfaceView"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:scaleType="center"
-                    android:background="@android:color/black"/>
+                    android:scaleType="center"/>
 
                 <TextView
                     android:layout_width="wrap_content"

@@ -155,6 +155,9 @@ jobject EntitiesFactory::instanceBitmapRgb565(RgbFrame &frame, JNIEnv &env) {
     return instanceBitmap(frame, env, bitmapConfigRgb565, 2);
 }
 
+/** @param extra is responsible for filling full area of the bitmap,
+ * without extra the bitmap will be filled with pixels only half or third
+ * and the rest part of the bitmap will be black */
 jobject EntitiesFactory::instanceBitmap(RgbFrame &frame, JNIEnv &env, jstring bitmapConfig, short extra) {
     jobject config = env.CallStaticObjectMethod(classBitmapConfig, ctorBitmapConfig, bitmapConfig);
     jobject bitmap = env.CallStaticObjectMethod(classBitmap, ctorBitmap, frame.width, frame.height, config);

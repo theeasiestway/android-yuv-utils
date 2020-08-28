@@ -44,7 +44,6 @@ YuvFrame* LibyuvWrapper::to420(RgbFrame &in) {
 
 void LibyuvWrapper::scale(YuvFrame& in, int scaleWidth, int scaleHeight, int scaleFilter) {
     if (scaleWidth > 0 && scaleHeight > 0 && (in.width != scaleWidth || in.height != scaleHeight)) {
-        LOGE("Qdqwdqwdqw", "scale in width: %d, height: %d; scaleWidth: %d, scaleHeight: %d", in.width, in.height, scaleWidth, scaleHeight);
         YuvFrame* temp = FramesFactory::instanceYuv(scaleWidth, scaleHeight);
         libyuv::I420Scale(in.y, in.yStride,
                           in.u, in.uStride,
