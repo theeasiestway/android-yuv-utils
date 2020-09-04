@@ -5,6 +5,7 @@
 #include "factories/EntitiesFactory.h"
 #include "LibyuvWrapper.h"
 #include "utils/Logger.h"
+#include "factories/SurfaceDrawer.h"
 
 //
 // Created by Loboda Alexey on 22.06.2020.
@@ -193,4 +194,26 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_theeasiestway_yuv_YuvUtils_00024Companion_nativeInit(JNIEnv *env, jobject thiz) {
     EntitiesFactory::init(*env);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_SurfaceDrawer_setSurfaceNative(JNIEnv *env, jobject thiz,
+                                                                    jobject surface,
+                                                                    jint width, jint height) {
+    SurfaceDrawer::setSurface(*env, surface, width, height);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_SurfaceDrawer_drawFrameNative(JNIEnv *env, jobject thiz, jlong pointer) {
+    RgbFrame *frame = EntitiesFactory::fromPointer<RgbFrame>(pointer);
+    if (frame == nullptr || frame->dataSize <= 0) return;
+    SurfaceDrawer::renderFrame(*frame);
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_theeasiestway_yuv_SurfaceDrawer_releaseSurface(JNIEnv *env, jobject thiz) {
+    SurfaceDrawer::releaseSurface();
 }

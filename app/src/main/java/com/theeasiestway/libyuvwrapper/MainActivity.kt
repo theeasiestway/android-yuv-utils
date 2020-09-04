@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
+import com.theeasiestway.yuv.SurfaceDrawer
 import com.theeasiestway.codec_h264.camera.ControllerVideo
 import com.theeasiestway.yuv.Constants
 import com.theeasiestway.yuv.YuvUtils
@@ -78,8 +79,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         vSurfaceView = findViewById(R.id.vSurfaceView)
         vSurfaceView.holder.addCallback(object: SurfaceHolder.Callback {
             override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) = Unit
-            override fun surfaceDestroyed(holder: SurfaceHolder?) { SurfaceDrawer.setSurface(null) }
-            override fun surfaceCreated(holder: SurfaceHolder?) { SurfaceDrawer.setSurface(holder?.surface) }
+            override fun surfaceDestroyed(holder: SurfaceHolder?) { SurfaceDrawer.releaseSurface() }
+            override fun surfaceCreated(holder: SurfaceHolder?) {
+                val surface = holder?.surface ?: return
+                SurfaceDrawer.setSurface(surface, vSurfaceView.width, vSurfaceView.height)
+            }
         })
 
         vPlay = findViewById(R.id.vPlay)
@@ -208,9 +212,17 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             return
         }
 
+/*        val buffer = rgb.getBytes()
+        val bitmap = Bitmap.createBitmap(rgb.width, rgb.height, Bitmap.Config.ARGB_8888)
+        bitmap.copyPixelsFromBuffer(buffer)
+        bitmap.isMutable*/
+
+        SurfaceDrawer.drawFrame(rgb)
+        rgb.destroy()
+
         //    renderYuv(frame)
 
-        renderRgb(rgb)
+        //renderRgb(rgb)
 
         // before optimisation frame.destroy time was: 40.0 ms.
         val startTime2 = System.currentTimeMillis()
@@ -223,18 +235,17 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         val array = ByteArray(bytes.remaining())
         bytes.get(array)
 
-
         val yuvImage = YuvImage(array, ImageFormat.NV21, frame.width, frame.height, null)
 
         val out = ByteArrayOutputStream()
         yuvImage.compressToJpeg(Rect(0, 0, frame.width, frame.height), 100, out)
         val imageBytes: ByteArray = out.toByteArray()
         val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-        SurfaceDrawer.draw(bm)
+    //    SurfaceDrawer.draw(bm)
         frame.destroy()
     }
 
     private fun renderRgb(frame: RgbFrame) {
-        SurfaceDrawer.draw(frame)
+    //    SurfaceDrawer.draw(frame)
     }
 }

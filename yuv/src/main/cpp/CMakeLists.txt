@@ -20,9 +20,10 @@ add_library( # Sets the name of the library.
         utils/TimeCounter.cpp
         factories/FramesFactory.cpp
         factories/EntitiesFactory.cpp
-        LibyuvWrapper.cpp
         entities/RgbFrame.cpp
         entities/YuvFrame.cpp
+        factories/SurfaceDrawer.cpp
+        LibyuvWrapper.cpp
         Easyyuv.cpp)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -52,6 +53,7 @@ find_library( # Sets the name of the path variable.
 target_link_libraries( # Specifies the target library.
         easyyuv
         yuv
+        android
         jnigraphics
         # Links the target library to the log library
         # included in the NDK.
