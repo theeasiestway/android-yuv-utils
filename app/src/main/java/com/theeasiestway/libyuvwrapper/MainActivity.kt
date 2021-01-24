@@ -78,12 +78,14 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         vCameraView = findViewById(R.id.vCameraPreview)
         vSurfaceView = findViewById(R.id.vSurfaceView)
         vSurfaceView.holder.addCallback(object: SurfaceHolder.Callback {
-            override fun surfaceChanged(holder: SurfaceHolder?, format: Int, width: Int, height: Int) = Unit
-            override fun surfaceDestroyed(holder: SurfaceHolder?) { SurfaceDrawer.releaseSurface() }
-            override fun surfaceCreated(holder: SurfaceHolder?) {
-                val surface = holder?.surface ?: return
+            override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) = Unit
+            override fun surfaceDestroyed(holder: SurfaceHolder) { SurfaceDrawer.releaseSurface() }
+            override fun surfaceCreated(holder: SurfaceHolder) {
+                val surface = holder.surface ?: return
                 SurfaceDrawer.setSurface(surface, vSurfaceView.width, vSurfaceView.height)
             }
+
+
         })
 
         vPlay = findViewById(R.id.vPlay)
@@ -184,9 +186,18 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             .mirrorH(mirrorH)
             .mirrorV(mirrorV)
             .getI420(image)
-        val rgb = yuvUtils.getRgb565(i420, 1)
+         val rgb = yuvUtils.getRgb565(i420, 1)
 
-        i420.destroy()
+        //i420.destroy()
+
+        // Checked for memory leaks (getI420->getRgb565) and there are no them in:
+        // 1. scale
+        // 2. getI420
+        // 3. getRgb565
+        // 4. rotate
+        // 5. mirrorH
+        // 6. mirrorV - was 350-400 mb memory usage
+        // 7. all together
 
         // before optimisation get frame time was: 108.0 ms.
 
@@ -212,22 +223,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             return
         }
 
-/*        val buffer = rgb.getBytes()
-        val bitmap = Bitmap.createBitmap(rgb.width, rgb.height, Bitmap.Config.ARGB_8888)
-        bitmap.copyPixelsFromBuffer(buffer)
-        bitmap.isMutable*/
-
         SurfaceDrawer.drawFrame(rgb)
+        i420.destroy()
         rgb.destroy()
 
-        //    renderYuv(frame)
-
-        //renderRgb(rgb)
-
         // before optimisation frame.destroy time was: 40.0 ms.
-        val startTime2 = System.currentTimeMillis()
-
-        //   Log.d("uyjerer", "destroy time: ${(System.currentTimeMillis() - startTime2).toFloat()} ms.")
     }
 
     private fun renderYuv(frame: YuvFrame) {
@@ -243,9 +243,5 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     //    SurfaceDrawer.draw(bm)
         frame.destroy()
-    }
-
-    private fun renderRgb(frame: RgbFrame) {
-    //    SurfaceDrawer.draw(frame)
     }
 }

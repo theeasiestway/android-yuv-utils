@@ -14,13 +14,14 @@
 
 static const char *TAG = "SurfaceDrawer";
 
-static bool needToUpdateBuffers = false;
-
 static ANativeWindow *window = nullptr;
-static int width, height;
-static ANativeWindow_Buffer buffer;
+static int width = -1, height = -1;
 
 class SurfaceDrawer {
+
+private:
+    static void renderArgbFrame(const RgbFrame &frame);
+    static void renderRgb565Frame(const RgbFrame &frame);
 
 public:
     static void setSurface(JNIEnv &env, jobject surface, jint width, jint height);

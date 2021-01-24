@@ -1,6 +1,6 @@
 #include <jni.h>
-#include "entities/rgbFrame.h"
-#include "entities/yuvFrame.h"
+#include "entities/RgbFrame.h"
+#include "entities/YuvFrame.h"
 #include "factories/FramesFactory.h"
 #include "factories/EntitiesFactory.h"
 #include "LibyuvWrapper.h"

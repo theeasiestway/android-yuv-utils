@@ -1,5 +1,6 @@
 package com.theeasiestway.codec_h264.camera
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.Configuration
 import android.hardware.display.DisplayManager
@@ -42,7 +43,7 @@ object ControllerVideo {
             addListener(Runnable {
                 cameraProvider = cameraProviderFuture.get()
                 val preview = Preview.Builder().setTargetName("CameraPreview").build()
-                preview.setSurfaceProvider(previewView.createSurfaceProvider())
+                preview.setSurfaceProvider(previewView.surfaceProvider)
                 startCamera(lifecycleOwner, cameraProvider, preview, lensFacing, displayId = previewView.display.displayId, onError = {
                     Toast.makeText(context, "Unable to init camera", Toast.LENGTH_LONG).show()
                 })
@@ -50,6 +51,7 @@ object ControllerVideo {
         }
     }
 
+    @SuppressLint("UnsafeExperimentalUsageError")
     private fun startCamera(lifecycleOwner: WeakReference<LifecycleOwner>, cameraProvider: ProcessCameraProvider, preview: Preview, facing: Int, displayId: Int, onError: () -> Unit) {
         try {
             cameraProvider.unbindAll()
