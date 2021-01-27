@@ -219,6 +219,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         }
 
         if (widthCurrent <= 0 || heightCurrent <= 0) {
+            i420.destroy()
             rgb.destroy()
             return
         }
@@ -226,22 +227,5 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         SurfaceDrawer.drawFrame(rgb)
         i420.destroy()
         rgb.destroy()
-
-        // before optimisation frame.destroy time was: 40.0 ms.
-    }
-
-    private fun renderYuv(frame: YuvFrame) {
-        val bytes = frame.getBytes()
-        val array = ByteArray(bytes.remaining())
-        bytes.get(array)
-
-        val yuvImage = YuvImage(array, ImageFormat.NV21, frame.width, frame.height, null)
-
-        val out = ByteArrayOutputStream()
-        yuvImage.compressToJpeg(Rect(0, 0, frame.width, frame.height), 100, out)
-        val imageBytes: ByteArray = out.toByteArray()
-        val bm = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-    //    SurfaceDrawer.draw(bm)
-        frame.destroy()
     }
 }

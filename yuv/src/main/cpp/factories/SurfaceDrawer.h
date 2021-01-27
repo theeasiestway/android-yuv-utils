@@ -13,9 +13,11 @@
 #include "../entities/RgbFrame.h"
 
 static const char *TAG = "SurfaceDrawer";
+static const int PIXEL_ARGB = 4;
+static const int PIXEL_RGB = 2;
 
 static ANativeWindow *window = nullptr;
-static int width = -1, height = -1;
+static bool isBuffersGeometrySet = false;
 
 class SurfaceDrawer {
 
