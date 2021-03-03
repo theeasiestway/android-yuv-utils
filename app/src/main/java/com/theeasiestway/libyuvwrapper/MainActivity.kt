@@ -2,7 +2,6 @@ package com.theeasiestway.libyuvwrapper
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.*
 import android.media.Image
 import android.os.Build
 import android.os.Bundle
@@ -15,13 +14,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.view.PreviewView
 import androidx.lifecycle.LifecycleOwner
-import com.theeasiestway.yuv.SurfaceDrawer
 import com.theeasiestway.codec_h264.camera.ControllerVideo
 import com.theeasiestway.yuv.Constants
+import com.theeasiestway.yuv.SurfaceDrawer
 import com.theeasiestway.yuv.YuvUtils
-import com.theeasiestway.yuv.entities.RgbFrame
-import com.theeasiestway.yuv.entities.YuvFrame
-import java.io.ByteArrayOutputStream
 
 //
 // Created by Loboda Alexey on 22.06.2020.
@@ -84,8 +80,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                 val surface = holder.surface ?: return
                 SurfaceDrawer.setSurface(surface, vSurfaceView.width, vSurfaceView.height)
             }
-
-
         })
 
         vPlay = findViewById(R.id.vPlay)
@@ -126,6 +120,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
         vMirrorV = findViewById(R.id.vMirrorV)
         vMirrorV.setOnClickListener { mirrorV = !mirrorV }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopCamera()
     }
 
     private fun updateHeight(progress: Int = 0) {
