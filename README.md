@@ -1,7 +1,7 @@
 # android-yuv-utils
 CAUTION! The version from master branch actually works but has some issues like a lot of memory consumption and some other issues, currently I'm working on it.
 
-Compiled [libyuv](https://chromium.googlesource.com/libyuv/libyuv/) Google library and wrapper for it for easy and fast scale, rotate, mirror and converting frames from android Camera2 or CameraX.
+Compiled [libyuv](https://chromium.googlesource.com/libyuv/libyuv/) Google library and wrapper for it for easy and fast scale, rotate, mirror and convert frames from android Camera2 or CameraX.
 
 ## Supported features:
 1. Scale horizontally and/or vertically.
