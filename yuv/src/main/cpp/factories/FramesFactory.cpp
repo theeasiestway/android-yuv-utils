@@ -24,15 +24,15 @@ YuvFrame* FramesFactory::instanceYuv(int width, int height, int rotation) {
 }
 
 RgbFrame* FramesFactory::instanceArgb(int width, int height) {
-    int dataSize = (width * height) * 32;
+    int dataSize = (width * height) * 4; // 4 bytes: (8 + 8 + 8 + 8)bits / 8 bits
     int extra = width % 2 == 0 ? 0 : 1;
     int stride = width * 4 + extra;
     return new RgbFrame(width, height, dataSize, stride, LibyuvWrapper::ARGB);
 }
 
 RgbFrame* FramesFactory::instanceRgb565(int width, int height) {
-    int dataSize = (width * height) * 16;
+    int dataSize = (width * height) * 2; // 2 bytes: (5 + 6 + 5)bits / 8 bits
     int extra = width % 2 == 0 ? 0 : 1;
-    int stride = width * 4 + extra;
+    int stride = width * 2 + extra;
     return new RgbFrame(width, height, dataSize, stride, LibyuvWrapper::RGB565);
 }

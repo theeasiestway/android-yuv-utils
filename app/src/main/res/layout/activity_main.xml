@@ -57,12 +57,25 @@
                     android:layout_height="150dp"
                     android:scaleType="center"/>
 
+                <ImageView
+                    android:id="@+id/vImageView"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:scaleType="matrix"
+                    android:visibility="gone"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Result"/>
             </LinearLayout>
         </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/vCheckBoxOutput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Output to ImageView"/>
 
         <Button
             android:id="@+id/vPlay"

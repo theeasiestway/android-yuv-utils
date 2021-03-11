@@ -18,7 +18,9 @@ abstract class Frame {
         if (nativePointer != defPointerValue) destroy(nativePointer, getType())
     }
     open fun getBytes() = getBytes(nativePointer)
+    open fun getBytesArray() = getBytesArray(nativePointer)
 
     private external fun destroy(pointer: Long, classType: Int)
     private external fun getBytes(pointer: Long): ByteBuffer
+    private external fun getBytesArray(pointer: Long): ByteArray
 }

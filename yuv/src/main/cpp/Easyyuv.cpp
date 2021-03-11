@@ -152,6 +152,17 @@ Java_com_theeasiestway_yuv_entities_Frame_getBytes(JNIEnv *env, jobject thiz, jl
 }
 
 extern "C"
+JNIEXPORT jbyteArray JNICALL
+Java_com_theeasiestway_yuv_entities_Frame_getBytesArray(JNIEnv *env, jobject thiz, jlong pointer) {
+    Frame *frame = EntitiesFactory::fromPointer<Frame>(pointer);
+    if (frame == nullptr || frame->dataSize <= 0) return env->NewByteArray(1);
+
+    jbyteArray array = env->NewByteArray(frame->dataSize);
+    env->SetByteArrayRegion(array, 0, frame->dataSize, (jbyte*) frame->data);
+    return array;
+}
+
+extern "C"
 JNIEXPORT jobject JNICALL
 Java_com_theeasiestway_yuv_entities_RgbFrame_getBitmap(JNIEnv *env, jobject thiz, jlong pointer, jint classType) {
     switch (classType) {

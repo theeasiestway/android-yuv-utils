@@ -127,7 +127,7 @@ class YuvUtils {
     // Support
     //
 
-    private fun transform(image: Image): Any {
+    private fun transform(image: Image): Frame {
         try {
             return transformNative(image.planes[0].buffer,
                 image.planes[1].buffer,
@@ -152,7 +152,7 @@ class YuvUtils {
         finally { transformParams.clear() }
     }
 
-    private fun transform(frame: RgbFrame): Any {
+    private fun transform(frame: RgbFrame): Frame {
         try {
             return transformNative(
                 frame.getBytes(),
@@ -169,7 +169,7 @@ class YuvUtils {
         finally { transformParams.clear() }
     }
 
-    private fun transform(yuvFrame: YuvFrame, uvPixelStride: Int): Any {
+    private fun transform(yuvFrame: YuvFrame, uvPixelStride: Int): Frame {
         try {
             return transformNative(
                 yuvFrame.getBytesY(),
@@ -201,7 +201,7 @@ class YuvUtils {
                                          width: Int,
                                          height: Int,
                                          classType: Int,
-                                         returnType: Int): Any
+                                         returnType: Int): Frame
 
     private external fun transformNative(y: ByteBuffer,
                                          u: ByteBuffer,
@@ -218,5 +218,5 @@ class YuvUtils {
                                          rotationMode: Int,
                                          mirrorH: Boolean,
                                          mirrorV: Boolean,
-                                         returnType: Int): Any
+                                         returnType: Int): Frame
 }
