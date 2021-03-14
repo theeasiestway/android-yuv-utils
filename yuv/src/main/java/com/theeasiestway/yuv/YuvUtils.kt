@@ -22,7 +22,7 @@ class YuvUtils {
     companion object {
 
         val TAG = "YuvUtils"
-        val transformParams = TransformParams()
+        private val transformParams = TransformParams()
 
         init {
             try {

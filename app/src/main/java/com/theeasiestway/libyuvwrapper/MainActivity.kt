@@ -3,6 +3,7 @@ package com.theeasiestway.libyuvwrapper
 import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.Image
 import android.os.Build
 import android.os.Bundle
@@ -73,8 +74,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
                 }
 
                 override fun surfaceCreated(holder: SurfaceHolder) {
-                    val surface = holder.surface ?: return
-                    SurfaceDrawer.setSurface(surface, vSurfaceView.width, vSurfaceView.height)
+                    SurfaceDrawer.setSurface(holder.surface, vSurfaceView.width, vSurfaceView.height)
                 }
             })
 
@@ -89,27 +89,23 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
 
             vWidth.isEnabled = false
             vWidth.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                    updateWidth(progress)
-                }
-
                 override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
                 override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    updateWidth(progress + 1)
+                }
             })
 
             vHeight.isEnabled = false
             vHeight.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
-                ) {
-                    updateHeight(progress)
-                }
-
                 override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
                 override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    updateHeight(progress + 1)
+                }
             })
+            vWidth.progress = 5
+            vHeight.progress = 5
 
             vRotate.setOnClickListener {
                 rotate = when (rotate) {
@@ -130,13 +126,13 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         stopCamera()
     }
 
-    private fun updateHeight(progress: Int = 0) {
-        heightCurrent = height + progress * 100
+    private fun updateHeight(progress: Int = 5) {
+        heightCurrent = progress * height / 5
         binding.vHeightLabel.text = heightCurrent.toString()
     }
 
-    private fun updateWidth(progress: Int = 0) {
-        widthCurrent = width + progress * 100
+    private fun updateWidth(progress: Int = 5) {
+        widthCurrent = progress * width / 5
         binding.vWidthLabel.text = widthCurrent.toString()
     }
 
@@ -169,15 +165,18 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             vPlay.visibility = View.VISIBLE
             vWidth.isEnabled = false
             vHeight.isEnabled = false
-            ControllerVideo.destroyCamera()
-            started = false
-            vWidth.progress = 0
-            vHeight.progress = 0
-            rotate = Constants.ROTATE_0
-            mirrorH = false
-            mirrorV = false
-            needToUpdateWH = true
+            vWidth.progress = 5
+            vHeight.progress = 5
         }
+
+        ControllerVideo.destroyCamera()
+        started = false
+        widthCurrent = 0
+        heightCurrent = 0
+        rotate = Constants.ROTATE_0
+        mirrorH = false
+        mirrorV = false
+        needToUpdateWH = true
     }
 
     var maxTime = 0f
@@ -242,7 +241,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             SurfaceDrawer.drawFrame(frame)
             frame.destroy()
         } else {
-            val bitmap = getBitmapFromFrame(frame)
+            val bitmap = frame.getBitmap() //getBitmapFromFrame(frame)
             runOnUiThread {
                 binding.vImageView.setImageBitmap(bitmap)
                 frame.destroy()

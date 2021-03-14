@@ -108,6 +108,16 @@ void EntitiesFactory::init(JNIEnv &env) {
     ctorBitmapConfig = env.GetStaticMethodID(classBitmapConfig, "valueOf", "(Ljava/lang/String;)Landroid/graphics/Bitmap$Config;");
 }
 
+void EntitiesFactory::destroy(JNIEnv &env) {
+    env.DeleteGlobalRef(classYuv);
+    env.DeleteGlobalRef(classArgb);
+    env.DeleteGlobalRef(classRgb565);
+    env.DeleteGlobalRef(classBitmap);
+    env.DeleteGlobalRef(bitmapConfigArgb);
+    env.DeleteGlobalRef(bitmapConfigRgb565);
+    env.DeleteGlobalRef(classBitmapConfig);
+}
+
 jobject EntitiesFactory::instanceYuv(YuvFrame &frame, JNIEnv &env) {
     jobject instance = env.NewObject(classYuv, ctorYuv);
     env.SetLongField(instance, pointerYuv, frame.getPointer());
@@ -162,7 +172,7 @@ jobject EntitiesFactory::instanceBitmap(RgbFrame &frame, JNIEnv &env, jstring bi
     jobject config = env.CallStaticObjectMethod(classBitmapConfig, ctorBitmapConfig, bitmapConfig);
     jobject bitmap = env.CallStaticObjectMethod(classBitmap, ctorBitmap, frame.width, frame.height, config);
     void *pixels;
-    int ret = 0;
+    int ret;
     if ((ret = AndroidBitmap_lockPixels(&env, bitmap, &pixels)) < 0) {
         LOGE(TAG, "[instanceBitmapArgb] lockPixels error: %d", ret);
         return nullptr;
