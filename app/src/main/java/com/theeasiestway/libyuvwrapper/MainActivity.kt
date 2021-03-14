@@ -179,11 +179,7 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         needToUpdateWH = true
     }
 
-    var maxTime = 0f
-
     private fun processImage(image: Image) {
-
-        val startTime1 = System.currentTimeMillis()
 
         width = image.width
         height = image.height
@@ -194,24 +190,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             .mirrorV(mirrorV)
             .getI420(image)
          val rgb = yuvUtils.getArgb(i420, 1)
-
-        //i420.destroy()
-
-        // Checked for memory leaks (getI420->getRgb565) and there are no them in:
-        // 1. scale
-        // 2. getI420
-        // 3. getRgb565
-        // 4. rotate
-        // 5. mirrorH
-        // 6. mirrorV - was 350-400 mb memory usage
-        // 7. all together
-
-        // before optimisation get frame time was: 108.0 ms.
-
-        if (maxTime < (System.currentTimeMillis() - startTime1).toFloat()) {
-            maxTime = (System.currentTimeMillis() - startTime1).toFloat()
-            Log.d("erfrf", "get frame time: $maxTime ms.")
-        }
 
         image.close()
 
@@ -232,7 +210,6 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
         }
 
         renderFrame(rgb)
-
         i420.destroy()
     }
 
@@ -241,21 +218,11 @@ class MainActivity : AppCompatActivity(), LifecycleOwner {
             SurfaceDrawer.drawFrame(frame)
             frame.destroy()
         } else {
-            val bitmap = frame.getBitmap() //getBitmapFromFrame(frame)
+            val bitmap = frame.getBitmap()
             runOnUiThread {
                 binding.vImageView.setImageBitmap(bitmap)
                 frame.destroy()
             }
-        }
-    }
-
-    private fun getBitmapFromFrame(frame: RgbFrame): Bitmap {
-        val config = if (frame is Rgb565Frame) Bitmap.Config.RGB_565 else Bitmap.Config.ARGB_8888
-        Log.d("qwwdwdq", "config: $config")
-        return Bitmap.createBitmap(frame.width, frame.height, config).apply {
-            val bytes = frame.getBytes()
-            Log.d("qwdqwdd", "bytes size: ${bytes.remaining()}; byteCount: $byteCount")
-            copyPixelsFromBuffer(bytes)
         }
     }
 }

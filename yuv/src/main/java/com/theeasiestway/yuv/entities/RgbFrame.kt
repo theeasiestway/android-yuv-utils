@@ -10,7 +10,7 @@ abstract class RgbFrame: Frame() {
     var dataSize: Int = 0
     var dataStride: Int = 0
 
-    fun getBitmap() = getBitmap(nativePointer, getType())
-
-    private external fun getBitmap(pointer: Long, classType: Int): Bitmap?
+    abstract fun getBitmapSingle(): Bitmap?
+    abstract fun getBitmap(isMutable: Boolean = true): Bitmap?
+    abstract fun releaseBitmapSingle()
 }
