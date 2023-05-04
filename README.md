@@ -1,5 +1,5 @@
 # android-yuv-utils
-CAUTION! The version from master branch actually works but has some issues like a lot of memory consumption and some other issues, currently I'm working on it.
+CAUTION! The version from master branch actually works but has some issues like a lot of memory consumption and some other issues.
 
 Compiled [libyuv](https://chromium.googlesource.com/libyuv/libyuv/) Google library and wrapper for it for easy and fast scale, rotate, mirror and convert frames from android Camera2 or CameraX.
 
@@ -16,7 +16,7 @@ armeabi-v7a, arm64-v8a, x86, x86_64
 
 #### Init library:
 ```kotlin
-val yuvUtils = YuvUtils()                                    // getting an instance of the library
+val yuvUtils = YuvUtils()                                    // getting library instance
 ```
 
 #### Prepare a frame from Camera2 or CameraX for scaling, rotating etc.:
@@ -30,12 +30,12 @@ var yuvFrame = yuvUtils.convertToI420(image)                 // this step isn't 
 /* the first way */
 val image = ...                                             // getting an image from Camera2 or CameraX api
 val scaledWidth = image.width * 2                           // getting current width and height
-val scaledHeight = image.height * 2                         // of a frame and for example double them
+val scaledHeight = image.height * 2                         // of the image and for example double them
 yuvFrame = yuvUtils.scale(image, scaledWidth, scaledHeight, Constants.FILTER_BOX)
 
 /* the second way here yuvFrame was taken from the yuvUtils.convertToI420 method as showed above */ 
 val scaledWidth = yuvFrame.width * 2                        // getting current width and height
-val scaledHeight = yuvFrame.height * 2                      // of a frame and for example double them
+val scaledHeight = yuvFrame.height * 2                      // of the image and for example double them
 yuvFrame = yuvUtils.scale(yuvFrame, scaledWidth, scaledHeight, Constants.FILTER_BOX)
 ```
 
@@ -68,15 +68,15 @@ val argbFrame = yuvUtils.yuv420ToArgb(yuvFrame)
 ```
 
 ## Project structure
-#### The project consists of two modules:
+#### Project consists of two modules:
 - **app** - here you can find a sample app that demonsrates scaling, rotating, mirroring and converting procedures by capturing frames from device's camera.
-- **yuv** - here you can find a C++ class that interacts with [libyuv 1759](https://chromium.googlesource.com/libyuv/libyuv/+/c5e45dcae58f5cb3eb893f8000c1de88a8fe3c4e) and a JNI wrapper for interacting with it from Java/Kotlin layer.
+- **yuv** - here you can find a C++ class that interacts with [libyuv 1759](https://chromium.googlesource.com/libyuv/libyuv/+/c5e45dcae58f5cb3eb893f8000c1de88a8fe3c4e) and JNI wrapper for interacting with it from Java/Kotlin layer.
 
 #### Compiled library:
-- **yuv.aar** - it's a compiled library of **yuv** module that mentioned above, it placed in a root directory of the project, you can easily add it to your project using gradle dependencies. First you should place **yuv.aar** in the libs folder of your project and then add to your build.gradle:
+- **yuv.aar** - it's a compiled library of **yuv** module that mentioned above, it placed in a root directory of the project, you can easily add it to your project using gradle dependencies. First you have to place **yuv.aar** in the libs folder of your project and then add to your build.gradle the following:
 ````groovy
 dependencies {
-    api fileTree(dir: 'libs', include: '*.jar')       // this line is necessary in order to gradle took yuv.aar from "libs" dir
+    api fileTree(dir: 'libs', include: '*.jar')       // this line is necessary in order to allow gradle to take yuv.aar from "libs" dir
     api files('libs/yuv.aar')                         // dependency for yuv.aar library
     ...                                               // other dependencies
 }
