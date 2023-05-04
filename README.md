@@ -1,10 +1,10 @@
 # android-yuv-utils
-CAUTION! The version from master branch actually works but has some issues like a lot of memory consumption and some other issues.
+CAUTION! The version from master branch actually works but has some issues like a lot of memory consumption and some other issues..
 
 Compiled [libyuv](https://chromium.googlesource.com/libyuv/libyuv/) Google library and wrapper for it for easy and fast scale, rotate, mirror and convert frames from android Camera2 or CameraX.
 
 ## Supported features:
-1. Scale horizontally and/or vertically.
+1. Horizontal and/or vertical scaling.
 2. Rotating by 90, 180 or 270 degrees.
 3. Mirror horizontally or vertically.
 4. Convert android YUV_420_8888 frame to ARGB.
@@ -68,7 +68,7 @@ val argbFrame = yuvUtils.yuv420ToArgb(yuvFrame)
 ```
 
 ## Project structure
-#### Project consists of two modules:
+#### The project consists of two modules:
 - **app** - here you can find a sample app that demonsrates scaling, rotating, mirroring and converting procedures by capturing frames from device's camera.
 - **yuv** - here you can find a C++ class that interacts with [libyuv 1759](https://chromium.googlesource.com/libyuv/libyuv/+/c5e45dcae58f5cb3eb893f8000c1de88a8fe3c4e) and JNI wrapper for interacting with it from Java/Kotlin layer.
 
@@ -76,8 +76,8 @@ val argbFrame = yuvUtils.yuv420ToArgb(yuvFrame)
 - **yuv.aar** - it's a compiled library of **yuv** module that mentioned above, it placed in a root directory of the project, you can easily add it to your project using gradle dependencies. First you have to place **yuv.aar** in the libs folder of your project and then add to your build.gradle the following:
 ````groovy
 dependencies {
-    api fileTree(dir: 'libs', include: '*.jar')       // this line is necessary in order to allow gradle to take yuv.aar from "libs" dir
-    api files('libs/yuv.aar')                         // dependency for yuv.aar library
-    ...                                               // other dependencies
+    implementation fileTree(dir: 'libs', include: '*.jar')       // this line is necessary in order to allow gradle to take yuv.aar from "libs" dir
+    implementation files('libs/yuv.aar')                         // dependency for yuv.aar library
+    ...                                                          // other dependencies
 }
 ````
